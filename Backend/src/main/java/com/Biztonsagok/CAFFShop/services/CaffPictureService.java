@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.*;
 
 @Service
 public class CaffPictureService {
@@ -29,7 +26,7 @@ public class CaffPictureService {
 		return caffPictureRepository.findById(id);
 	}
 
-	public Stream<CaffPicture> getAllCaffPicture(){
-		return caffPictureRepository.findAll().stream();
+	public List<CaffPicture> getAllCaffPicture(){
+		return caffPictureRepository.findAll();
 	}
 }
