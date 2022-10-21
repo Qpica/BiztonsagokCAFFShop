@@ -13,7 +13,7 @@ public class UserRole {
 	private UUID id;
 
 	@Enumerated(EnumType.STRING)
-	private UserRoleType role_name;
+	private UserRoleType roleName;
 
 	public UUID getId() {
 		return id;
@@ -23,11 +23,11 @@ public class UserRole {
 		this.id = id;
 	}
 
-	public UserRoleType getRole_name() {
-		return role_name;
+	public UserRoleType getRoleName() {
+		return roleName;
 	}
 
-	public void setRole_name(UserRoleType role_name) {
-		this.role_name = role_name;
+	public void setRoleName(UserRoleType roleName) {
+		this.roleName = roleName;
 	}
 }

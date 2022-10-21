@@ -1,5 +1,6 @@
 package com.Biztonsagok.CAFFShop.dto;
 
+import com.Biztonsagok.CAFFShop.models.CaffPicture;
 import com.Biztonsagok.CAFFShop.models.User;
 import com.Biztonsagok.CAFFShop.models.UserComment;
 
@@ -12,6 +13,13 @@ public class CaffPictureResponseDTO {
 	private User owner;
 
 	public CaffPictureResponseDTO(){ }
+
+	public CaffPictureResponseDTO(CaffPicture caffPicture){
+		this.title = caffPicture.getTitle();
+		this.description = caffPicture.getDescription();
+		this.userCommentList = caffPicture.getUserCommentList();
+		this.owner = caffPicture.getOwner();
+	}
 	public CaffPictureResponseDTO(String title, String description, List<UserComment> userCommentList, User owner) {
 		this.title = title;
 		this.description = description;

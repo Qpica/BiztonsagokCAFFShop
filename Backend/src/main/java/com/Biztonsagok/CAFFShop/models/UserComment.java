@@ -19,12 +19,12 @@ public class UserComment {
 	private String comment_value;
 
 	@ManyToOne
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "caffpicture_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private CaffPicture caffPicture;
 
 	@ManyToOne
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "users_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 

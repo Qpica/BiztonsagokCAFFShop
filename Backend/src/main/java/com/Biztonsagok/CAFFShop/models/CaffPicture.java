@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class CaffPicture {
 	@Size(max = 255)
 	private String description;
 
+	@NotNull
 	@Lob
 	private byte[] caffPictureData;
 
@@ -32,9 +34,19 @@ public class CaffPicture {
 	private List<UserComment> userCommentList;
 
 	@ManyToOne
-	@JoinColumn(name = "id")
+	@NotNull
+	@JoinColumn(name = "users_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User owner;
+
+	public CaffPicture() { }
+	public CaffPicture(String title, String description, byte[] caffPictureData, List<UserComment> userCommentList, User owner) {
+		this.title = title;
+		this.description = description;
+		this.caffPictureData = caffPictureData;
+		this.userCommentList = userCommentList;
+		this.owner = owner;
+	}
 
 	public UUID getId() {
 		return id;
