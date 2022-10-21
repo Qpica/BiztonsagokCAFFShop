@@ -15,6 +15,13 @@ public class UserRole {
 	@Enumerated(EnumType.STRING)
 	private UserRoleType roleName;
 
+	public UserRole() {
+	}
+
+	public UserRole(UserRoleType roleName) {
+		this.roleName = roleName;
+	}
+
 	public UUID getId() {
 		return id;
 	}
