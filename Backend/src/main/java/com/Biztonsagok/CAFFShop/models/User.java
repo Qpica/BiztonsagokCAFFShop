@@ -1,5 +1,6 @@
 package com.Biztonsagok.CAFFShop.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 
@@ -23,6 +24,7 @@ public class User {
 	private String username;
 
 	@NotBlank
+	@JsonIgnore
 	private String password;
 
 	@ManyToMany(fetch = FetchType.LAZY)

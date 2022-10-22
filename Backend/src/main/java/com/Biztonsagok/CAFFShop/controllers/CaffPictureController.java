@@ -4,9 +4,14 @@ import com.Biztonsagok.CAFFShop.dto.*;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
 import com.Biztonsagok.CAFFShop.services.CaffPictureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -18,6 +23,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/api/caffPictures")
 public class CaffPictureController {
@@ -25,17 +33,27 @@ public class CaffPictureController {
 	private CaffPictureService caffPictureService;
 
 	@GetMapping
-	public ResponseEntity<List<CaffPictureResponseDTO>> getAllCaffPicture(){
+	public ResponseEntity<CollectionModel<CaffPictureResponseDTO>> getAllCaffPicture(){
 		List<CaffPictureResponseDTO> responseDTOList = caffPictureService.getAllCaffPicture().stream()
 				.map(
-					caffPicture -> caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture)
+					caffPicture -> {
+						CaffPictureResponseDTO result = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture);
+						result.add(linkTo(methodOn(CaffPictureController.class).getOneCaffPicture(caffPicture.getId())).withSelfRel());
+						return result;
+					}
 				).collect(Collectors.toList());
-		return ResponseEntity.ok(responseDTOList);
+		CollectionModel<CaffPictureResponseDTO> collectionModel = CollectionModel.of(responseDTOList);
+		collectionModel.add(linkTo(methodOn(CaffPictureController.class).getAllCaffPicture()).withSelfRel());
+		return ResponseEntity.ok(collectionModel);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<CaffPictureResponseDTO> getOneCaffPicture(@PathVariable UUID id){
 		Optional<CaffPictureResponseDTO> result = caffPictureService.getCaffPictureResponseDTO(id);
+		if(result.isPresent()){
+			result.get().add(linkTo(methodOn(CaffPictureController.class).getOneCaffPicture(id)).withSelfRel());
+			result.get().add(linkTo(methodOn(CaffPictureController.class).getAllCaffPicture()).withRel(IanaLinkRelations.COLLECTION));
+		}
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
@@ -60,10 +78,10 @@ public class CaffPictureController {
 		}
 		return storedCaffPicture.map(caffPicture -> {
 			CaffPictureResponseDTO result = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture);
-			URI location = ServletUriComponentsBuilder
-					.fromCurrentRequest().path("/{id}")
-					.buildAndExpand(caffPicture.getId()).toUri();
-			return ResponseEntity.created(location).body(result);
+			final Link link = WebMvcLinkBuilder.linkTo(methodOn(CaffPictureController.class)
+					.getOneCaffPicture(caffPicture.getId())).withSelfRel();
+			result.add(link);
+			return ResponseEntity.created(link.toUri()).body(result);
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
 	}
 

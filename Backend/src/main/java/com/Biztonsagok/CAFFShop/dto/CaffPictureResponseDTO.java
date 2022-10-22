@@ -3,10 +3,11 @@ package com.Biztonsagok.CAFFShop.dto;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
 import com.Biztonsagok.CAFFShop.models.User;
 import com.Biztonsagok.CAFFShop.models.UserComment;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
-public class CaffPictureResponseDTO {
+public class CaffPictureResponseDTO extends RepresentationModel<CaffPictureResponseDTO> {
 	private String title;
 	private String description;
 	private List<UserComment> userCommentList;
