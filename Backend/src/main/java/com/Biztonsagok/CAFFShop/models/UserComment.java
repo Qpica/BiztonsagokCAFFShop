@@ -1,11 +1,13 @@
 package com.Biztonsagok.CAFFShop.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Entity
@@ -21,12 +23,15 @@ public class UserComment {
 	@ManyToOne
 	@JoinColumn(name = "caffpicture_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonBackReference
 	private CaffPicture caffPicture;
 
 	@ManyToOne
+	@NotNull
 	@JoinColumn(name = "users_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private User user;
+	@JsonBackReference
+	private User owner;
 
 	public UserComment() {
 	}
@@ -59,11 +64,11 @@ public class UserComment {
 		this.caffPicture = caffPicture;
 	}
 
-	public User getUser() {
-		return user;
+	public User getOwner() {
+		return owner;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 }

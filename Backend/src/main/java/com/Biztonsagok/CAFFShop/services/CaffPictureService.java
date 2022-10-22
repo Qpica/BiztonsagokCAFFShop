@@ -10,9 +10,7 @@ import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.Biztonsagok.CAFFShop.repositories.CaffPictureRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserCommentRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
-import com.Biztonsagok.CAFFShop.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -74,7 +72,6 @@ public class CaffPictureService {
 		Optional<CaffPicture> result = caffPictureRepository.findById(id);
 		if(result.isPresent()){
 			addUserCommentFrom(userCommentRequestDTO, result.get());
-			caffPictureRepository.save(result.get());
 		}
 		return result;
 	}
@@ -83,8 +80,10 @@ public class CaffPictureService {
 		UserComment userComment = new UserComment(userCommentRequestDTO.getComment_value());
 
 		Optional<User> loggedInUser = userRepository.findByUsername("admin");
-		loggedInUser.ifPresent(userComment::setUser);
+		loggedInUser.ifPresent(userComment::setOwner);
 		userComment.setCaffPicture(caffPicture);
-		caffPicture.getUserCommentList().add(userComment);
+		//caffPicture.getUserCommentList().add(userComment);
+
+		userCommentRepository.save(userComment);
 	}
 }

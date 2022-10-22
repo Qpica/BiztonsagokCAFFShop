@@ -1,5 +1,7 @@
 package com.Biztonsagok.CAFFShop.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -31,12 +33,14 @@ public class CaffPicture {
 	private byte[] caffPictureData;
 
 	@OneToMany(mappedBy = "caffPicture")
+	@JsonManagedReference
 	private List<UserComment> userCommentList;
 
 	@ManyToOne
 	@NotNull
 	@JoinColumn(name = "users_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonBackReference
 	private User owner;
 
 	public CaffPicture() { }

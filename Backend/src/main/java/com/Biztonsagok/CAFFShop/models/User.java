@@ -1,5 +1,6 @@
 package com.Biztonsagok.CAFFShop.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -25,14 +26,17 @@ public class User {
 	private String password;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(	joinColumns = @JoinColumn(name = "user_id"),
-				inverseJoinColumns = @JoinColumn(name = "userrole_id"))
+	@JoinTable(	name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "userRole_id"))
 	private Set<UserRole> roles = new HashSet<>();
 
-	@OneToMany(mappedBy = "id", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
+	@JsonManagedReference
 	private List<CaffPicture> caffs;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "owner")
+	@JsonManagedReference
 	private List<UserComment> comments;
 
 	public User() {

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
+@Table(name = "userRole")
 public class UserRole {
 	@Id
 	@GeneratedValue
