@@ -52,4 +52,19 @@ public class UserService {
 		}
 		return userToDelete;
 	}
+
+	public Optional<User> updateUser(UUID id, UserRequestDTO userRequestDTO) {
+		Optional<User> userToUpdate = userRepository.findById(id);
+		if(userToUpdate.isPresent()){
+			updateUserFrom(userRequestDTO, userToUpdate.get());
+			userRepository.save(userToUpdate.get());
+			return userToUpdate;
+		}
+		return userToUpdate;
+	}
+
+	private void updateUserFrom(UserRequestDTO userRequestDTO, User user) {
+		user.setUsername(Objects.requireNonNullElse(userRequestDTO.getUsername(), user.getUsername()));
+		user.setRoles(Objects.requireNonNullElse(userRequestDTO.getRoles(), user.getRoles()));
+	}
 }

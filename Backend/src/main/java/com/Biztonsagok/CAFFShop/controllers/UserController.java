@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +48,19 @@ public class UserController {
 									.buildAndExpand(user.getUsername()).toUri();
 							return ResponseEntity.created(location).body(result);
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable UUID id,
+														 @Valid @RequestBody UserRequestDTO userRequestDTO){
+		Optional<User> updatedUser = userService.updateUser(id, userRequestDTO);
+		if(updatedUser.isPresent()){
+			UserResponseDTO result = userService.userResponseDTOFromUserSimple(updatedUser.get());
+			return ResponseEntity.accepted().body(result);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 
 	@DeleteMapping("/{id}")
