@@ -33,11 +33,11 @@ public class CaffPictureRequestDTO {
 		this.caffFile = caffFile;
 	}
 
-	public String getOwner() {
+	public String getOwnerUserName() {
 		return ownerUserName;
 	}
 
-	public void setOwner(String owner) {
-		this.ownerUserName = owner;
+	public void setOwnerUserName(String ownerUserName) {
+		this.ownerUserName = ownerUserName;
 	}
 }
