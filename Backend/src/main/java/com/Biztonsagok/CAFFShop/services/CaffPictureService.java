@@ -3,10 +3,16 @@ package com.Biztonsagok.CAFFShop.services;
 import com.Biztonsagok.CAFFShop.dto.CaffPictureDataResponseDTO;
 import com.Biztonsagok.CAFFShop.dto.CaffPictureRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.CaffPictureResponseDTO;
+import com.Biztonsagok.CAFFShop.dto.UserCommentRequestDTO;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
+import com.Biztonsagok.CAFFShop.models.User;
+import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.Biztonsagok.CAFFShop.repositories.CaffPictureRepository;
+import com.Biztonsagok.CAFFShop.repositories.UserCommentRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
+import com.Biztonsagok.CAFFShop.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,7 +23,8 @@ import java.util.*;
 public class CaffPictureService {
 	@Autowired
 	private CaffPictureRepository caffPictureRepository;
-
+	@Autowired
+	private UserCommentRepository userCommentRepository;
 	@Autowired
 	private UserRepository userRepository;
 
@@ -61,5 +68,23 @@ public class CaffPictureService {
 	public Optional<CaffPictureDataResponseDTO> getCaffPictureDataResponseDTO(UUID id) {
 		Optional<CaffPicture> result = caffPictureRepository.findById(id);
 		return result.map(this::caffPictureResponseDataDTOFromCaffPicture);
+	}
+
+	public Optional<CaffPicture> addUserCommentToCaffPicture(UUID id, UserCommentRequestDTO userCommentRequestDTO) {
+		Optional<CaffPicture> result = caffPictureRepository.findById(id);
+		if(result.isPresent()){
+			addUserCommentFrom(userCommentRequestDTO, result.get());
+			caffPictureRepository.save(result.get());
+		}
+		return result;
+	}
+
+	private void addUserCommentFrom(UserCommentRequestDTO userCommentRequestDTO, CaffPicture caffPicture) {
+		UserComment userComment = new UserComment(userCommentRequestDTO.getComment_value());
+
+		Optional<User> loggedInUser = userRepository.findByUsername("admin");
+		loggedInUser.ifPresent(userComment::setUser);
+		userComment.setCaffPicture(caffPicture);
+		caffPicture.getUserCommentList().add(userComment);
 	}
 }

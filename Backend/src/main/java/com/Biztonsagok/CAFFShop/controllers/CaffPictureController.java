@@ -1,9 +1,6 @@
 package com.Biztonsagok.CAFFShop.controllers;
 
-import com.Biztonsagok.CAFFShop.dto.CaffPictureDataResponseDTO;
-import com.Biztonsagok.CAFFShop.dto.CaffPictureRequestDTO;
-import com.Biztonsagok.CAFFShop.dto.CaffPictureResponseDTO;
-import com.Biztonsagok.CAFFShop.dto.UserResponseDTO;
+import com.Biztonsagok.CAFFShop.dto.*;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
 import com.Biztonsagok.CAFFShop.services.CaffPictureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +65,19 @@ public class CaffPictureController {
 					.buildAndExpand(caffPicture.getId()).toUri();
 			return ResponseEntity.created(location).body(result);
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
+	}
+
+	@PostMapping("/{id}/comments")
+	public ResponseEntity<Void> addUserCommentToCaffPicture(
+			@PathVariable UUID id,
+			@Valid @RequestBody UserCommentRequestDTO userCommentRequestDTO){
+		Optional<CaffPicture> caffPictureWithAddedComment = caffPictureService.addUserCommentToCaffPicture(id,
+				userCommentRequestDTO);
+		if(caffPictureWithAddedComment.isPresent()){
+			return ResponseEntity.ok().build();
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 }

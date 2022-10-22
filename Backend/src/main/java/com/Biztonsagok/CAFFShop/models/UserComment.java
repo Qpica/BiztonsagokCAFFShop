@@ -28,6 +28,13 @@ public class UserComment {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
+	public UserComment() {
+	}
+
+	public UserComment(String comment_value) {
+		this.comment_value = comment_value;
+	}
+
 	public UUID getId() {
 		return id;
 	}
