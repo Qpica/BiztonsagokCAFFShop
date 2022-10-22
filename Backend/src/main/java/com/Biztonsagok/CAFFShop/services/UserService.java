@@ -44,4 +44,12 @@ public class UserService {
 		);
 		return Optional.of(userToRegister);
 	}
+
+	public Optional<User> deleteUserById(UUID id) {
+		Optional<User> userToDelete = userRepository.findById(id);
+		if(userToDelete.isPresent()){
+			userRepository.deleteById(id);
+		}
+		return userToDelete;
+	}
 }

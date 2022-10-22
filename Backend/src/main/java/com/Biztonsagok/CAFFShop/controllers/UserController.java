@@ -32,7 +32,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{userName}")
-	public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String userName){
+	public ResponseEntity<UserResponseDTO> getUserByUserName(@PathVariable String userName){
 		Optional<UserResponseDTO> result = userService.getUserResponseDTOByUserName(userName);
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
@@ -47,5 +47,16 @@ public class UserController {
 									.buildAndExpand(user.getUsername()).toUri();
 							return ResponseEntity.created(location).body(result);
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable UUID id){
+		Optional<User> result = userService.deleteUserById(id);
+		if(result.isPresent()){
+			return ResponseEntity.noContent().build();
+		}
+		else {
+			return ResponseEntity.badRequest().build();
+		}
 	}
 }
