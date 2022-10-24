@@ -67,4 +67,12 @@ public class UserService {
 		user.setUsername(Objects.requireNonNullElse(userRequestDTO.getUsername(), user.getUsername()));
 		user.setRoles(Objects.requireNonNullElse(userRequestDTO.getRoles(), user.getRoles()));
 	}
+
+	public Optional<User> findByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
+	public void createUser(String username, String password) {
+		userRepository.save(new User(username, password));
+	}
 }
