@@ -67,7 +67,24 @@ const UserManagement = ({ isLoading }) => {
                                 </ListItemAvatar>
                             </ListItem>
                             <ListItem>
-                                <ListItemButton>User 2</ListItemButton>
+                                <ListItemAvatar onClick={handleSelectedOpen}>
+                                    <MyIcon icon={<User fontSize="inherit" />} />
+                                </ListItemAvatar>
+                                <ListItemButton onClick={handleSelectedOpen}> User 2</ListItemButton>
+                                <Box sx={{ maxWidth: 50 }} />
+                                <ListItemAvatar onClick={handleDeleteOpen} sx={{ m: 2 }}>
+                                    <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
+                                </ListItemAvatar>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemAvatar onClick={handleSelectedOpen}>
+                                    <MyIcon icon={<User fontSize="inherit" />} />
+                                </ListItemAvatar>
+                                <ListItemButton onClick={handleSelectedOpen}> User 3</ListItemButton>
+                                <Box sx={{ maxWidth: 50 }} />
+                                <ListItemAvatar onClick={handleDeleteOpen} sx={{ m: 2 }}>
+                                    <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
+                                </ListItemAvatar>
                             </ListItem>
                         </List>
                     </Grid>
