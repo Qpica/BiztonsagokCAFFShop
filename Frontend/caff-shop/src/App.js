@@ -1,25 +1,32 @@
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import 'bootstrap-css-only/css/bootstrap.min.css';
-import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
-import Registration from './pages/registration.js';
-import Hello from './pages/hello';
-import Login from './pages/login.js';
-import Dashboard from "./pages/dashboard.js";
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
 
+// routing
+import Routes from 'routes';
+
+// defaultTheme
+import themes from 'themes';
+
+// project imports
+import NavigationScroll from 'layout/NavigationScroll';
+
+// ==============================|| APP ||============================== //
 
 const App = () => {
-  return (
-    <Router>
-        <Routes>
-          <Route exact path="/register" element={<Registration />} />
-          <Route exact path='/' element={<Hello />} />
-          <Route exact path='/login' element={<Login />} />
-          <Route exact path='/dashboard' element={<Dashboard />} />
-        </Routes>
-    </Router>
-  );
-}
+    const customization = useSelector((state) => state.customization);
+
+    return (
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={themes(customization)}>
+                <CssBaseline />
+                <NavigationScroll>
+                    <Routes />
+                </NavigationScroll>
+            </ThemeProvider>
+        </StyledEngineProvider>
+    );
+};
 
 export default App;
