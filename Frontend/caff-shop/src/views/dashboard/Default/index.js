@@ -13,7 +13,6 @@ import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
 import DirectionFromCard from './DirectionFromCard';
 import DatePickerCard from './DatePickerCard';
-import SearchIcon from '@mui/icons-material/Search';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
@@ -41,11 +40,6 @@ const Dashboard = () => {
                         <Grid container spacing={gridSpacing}>
                             <Grid item sm={6} xs={12} md={6} lg={12}>
                                 <DatePickerCard isLoading={isLoading} />
-                            </Grid>
-                            <Grid item sm={6} xs={12} md={6} lg={12}>
-                                <Button sx={{ borderRadius: 10 }} variant="contained" startIcon={<SearchIcon />}>
-                                    Search
-                                </Button>
                             </Grid>
                         </Grid>
                     </Grid>

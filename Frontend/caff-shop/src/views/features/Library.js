@@ -1,6 +1,6 @@
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
-import { Grid, Link, List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
+import { Grid, Link, Button, List, ListItem, ListItemText, ListItemAvatar, Avatar, Divider, Box } from '@mui/material';
 import MuiTypography from '@mui/material/Typography';
 
 // project imports
@@ -11,52 +11,32 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
-
+import SearchIcon from '@mui/icons-material/Search';
+import UploadIcon from '@mui/icons-material/Upload';
+import SearchSection from 'layout/MainLayout/Header/SearchSection';
 // ==============================|| TYPOGRAPHY ||============================== //
 
-const Typography = ({ isLoading }) => {
+const Library = ({ isLoading }) => {
     const theme = useTheme();
     return (
-        <MainCard title="Basic Typography" secondary={<SecondaryAction link="https://next.material-ui.com/system/typography/" />}>
-            <Grid container direction="column">
-                <Grid item sy={{ p: 5.0 }}>
-                    <List sx={{ py: 0 }}>
-                        <ListItem alignItems="center" disableGutters sx={{ py: 0 }}>
-                            <ListItemAvatar>
-                                <Avatar
-                                    variant="rounded"
-                                    sx={{
-                                        ...theme.typography.commonAvatar,
-                                        ...theme.typography.largeAvatar,
-                                        backgroundColor: theme.palette.warning.light,
-                                        color: theme.palette.warning.dark
-                                    }}
-                                >
-                                    <StorefrontTwoToneIcon fontSize="inherit" />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                sx={{
-                                    py: 0,
-                                    mt: 0.45,
-                                    mb: 0.45
-                                }}
-                                primary={<MuiTypography variant="h4">$203k</MuiTypography>}
-                                secondary={
-                                    <MuiTypography
-                                        variant="subtitle2"
-                                        sx={{
-                                            color: theme.palette.grey[500],
-                                            mt: 0.5
-                                        }}
-                                    >
-                                        Total Income
-                                    </MuiTypography>
-                                }
-                            />
-                        </ListItem>
-                    </List>
+        <MainCard title="Library">
+            <Grid container direction="row" onClick={() => handleToggle()}>
+                <Grid item ys={36}>
+                    <SearchSection />
                 </Grid>
+                <Grid item ys={36}>
+                    <Button sx={{ borderRadius: 10 }} variant="contained" startIcon={<SearchIcon />}>
+                        Search
+                    </Button>
+                </Grid>
+                <Grid item ys={36}>
+                    <Button sx={{ borderRadius: 10 }} variant="contained" startIcon={<UploadIcon />}>
+                        Upload
+                    </Button>
+                </Grid>
+            </Grid>
+            <Box sy={{ p: 50.0 }} />
+            <Grid container direction="column">
                 <Grid item sy={{ p: 5.0 }}>
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12} sm={6}>
@@ -169,4 +149,4 @@ const Typography = ({ isLoading }) => {
     );
 };
 
-export default Typography;
+export default Library;

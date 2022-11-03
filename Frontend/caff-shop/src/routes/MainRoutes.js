@@ -3,21 +3,16 @@ import { lazy } from 'react';
 // project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
-import UserManagement from 'views/utilities/UserManagement';
+import UserManagement from 'views/features/UserManagement';
+import { element } from 'prop-types';
+import Library from 'views/features/Library';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 
 // utilities routing
-const UtilsUserManagement = Loadable(lazy(() => import('views/utilities/UserManagement')));
-const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
-const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
-const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
-const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
-const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
-
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+const UserManagementPath = Loadable(lazy(() => import('views/features/UserManagement')));
+const LibraryPath = Loadable(lazy(() => import('views/features/Library')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -27,7 +22,7 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <DashboardDefault />
+            element: <LibraryPath />
         },
         {
             path: 'dashboard',
@@ -39,62 +34,12 @@ const MainRoutes = {
             ]
         },
         {
-            path: 'utils',
-            children: [
-                {
-                    path: 'user-management',
-                    element: <UserManagement />
-                }
-            ]
+            path: 'user-management',
+            element: <UserManagementPath />
         },
         {
-            path: 'utils',
-            children: [
-                {
-                    path: 'util-typography',
-                    element: <UtilsTypography />
-                }
-            ]
-        },
-        {
-            path: 'utils',
-            children: [
-                {
-                    path: 'util-color',
-                    element: <UtilsColor />
-                }
-            ]
-        },
-        {
-            path: 'utils',
-            children: [
-                {
-                    path: 'util-shadow',
-                    element: <UtilsShadow />
-                }
-            ]
-        },
-        {
-            path: 'icons',
-            children: [
-                {
-                    path: 'tabler-icons',
-                    element: <UtilsTablerIcons />
-                }
-            ]
-        },
-        {
-            path: 'icons',
-            children: [
-                {
-                    path: 'material-icons',
-                    element: <UtilsMaterialIcons />
-                }
-            ]
-        },
-        {
-            path: 'sample-page',
-            element: <SamplePage />
+            path: 'library',
+            element: <LibraryPath />
         }
     ]
 };
