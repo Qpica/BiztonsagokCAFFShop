@@ -14,16 +14,32 @@ import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from 'store/constant';
 import MyIcon from './MyIcon';
 
+const sampleUsers = [
+    { id: 1, name: 'Kovacs Zoltan' },
+    { id: 2, name: 'Nagy Bela' },
+    { id: 3, name: 'Minta Jozef' }
+];
+
 const UserManagement = ({ isLoading }) => {
     const theme = useTheme();
 
+    const [users, setUsers] = React.useState(sampleUsers);
+    const [selectedUserId, setSelectedUserId] = React.useState(null);
     const [openDelete, setOpenDelete] = React.useState(false);
 
-    const handleDeleteOpen = () => {
+    const handleDeleteOpen = (id) => {
         setOpenDelete(true);
+        setSelectedUserId(id);
     };
     const handleDeleteClose = () => {
         setOpenDelete(false);
+    };
+    const handleDeleteConfirm = () => {
+        console.log('Network call here');
+        var newUsers = users.filter((e) => e.id !== selectedUserId);
+        console.log(newUsers);
+        setUsers(newUsers);
+        handleDeleteClose();
     };
 
     const handleSelectedOpen = () => {
@@ -33,7 +49,7 @@ const UserManagement = ({ isLoading }) => {
         return (
             <Dialog
                 open={openDelete}
-                onClose={handleDeleteClose}
+                onClose={() => handleDeleteClose()}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -42,8 +58,8 @@ const UserManagement = ({ isLoading }) => {
                     <DialogContentText id="alert-dialog-description"> </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDeleteClose}>Cancel</Button>
-                    <Button onClick={handleDeleteClose}>Delete</Button>
+                    <Button onClick={() => handleDeleteClose()}>Cancel</Button>
+                    <Button onClick={() => handleDeleteConfirm()}>Delete</Button>
                 </DialogActions>
             </Dialog>
         );
@@ -52,40 +68,26 @@ const UserManagement = ({ isLoading }) => {
     return (
         <>
             <MyDeleteDialog />
-            <MainCard title="User management" secondary={<MyIcon icon={<Add fontSize="inherit" />} />}>
+            <MainCard title="User management">
                 <Grid container direction="column">
                     <Grid item sy={{ p: 5.0 }}>
                         <List sx={{ maxWidth: 450 }}>
-                            <ListItem>
-                                <ListItemAvatar onClick={handleSelectedOpen}>
-                                    <MyIcon icon={<User fontSize="inherit" />} />
-                                </ListItemAvatar>
-                                <ListItemButton onClick={handleSelectedOpen}> User 1</ListItemButton>
-                                <Box sx={{ maxWidth: 50 }} />
-                                <ListItemAvatar onClick={handleDeleteOpen} sx={{ m: 2 }}>
-                                    <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
-                                </ListItemAvatar>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemAvatar onClick={handleSelectedOpen}>
-                                    <MyIcon icon={<User fontSize="inherit" />} />
-                                </ListItemAvatar>
-                                <ListItemButton onClick={handleSelectedOpen}> User 2</ListItemButton>
-                                <Box sx={{ maxWidth: 50 }} />
-                                <ListItemAvatar onClick={handleDeleteOpen} sx={{ m: 2 }}>
-                                    <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
-                                </ListItemAvatar>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemAvatar onClick={handleSelectedOpen}>
-                                    <MyIcon icon={<User fontSize="inherit" />} />
-                                </ListItemAvatar>
-                                <ListItemButton onClick={handleSelectedOpen}> User 3</ListItemButton>
-                                <Box sx={{ maxWidth: 50 }} />
-                                <ListItemAvatar onClick={handleDeleteOpen} sx={{ m: 2 }}>
-                                    <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
-                                </ListItemAvatar>
-                            </ListItem>
+                            {users.map((user) => {
+                                return (
+                                    <div key={user.id}>
+                                        <ListItem>
+                                            <ListItemAvatar onClick={() => handleSelectedOpen()}>
+                                                <MyIcon icon={<User fontSize="inherit" />} />
+                                            </ListItemAvatar>
+                                            <ListItemButton onClick={() => handleSelectedOpen()}>{user.name}</ListItemButton>
+                                            <Box sx={{ maxWidth: 50 }} />
+                                            <ListItemAvatar onClick={() => handleDeleteOpen(user.id)} sx={{ m: 2 }}>
+                                                <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
+                                            </ListItemAvatar>
+                                        </ListItem>
+                                    </div>
+                                );
+                            })}
                         </List>
                     </Grid>
                 </Grid>

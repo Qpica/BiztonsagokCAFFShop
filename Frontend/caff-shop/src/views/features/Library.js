@@ -19,7 +19,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CommentIcon from '@mui/icons-material/ChatBubble';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import MyIcon from './MyIcon';
-// ==============================|| TYPOGRAPHY ||============================== //
 
 const Library = ({ isLoading }) => {
     const theme = useTheme();
@@ -56,7 +55,7 @@ const Library = ({ isLoading }) => {
                     <Grid container direction="column">
                         <Grid item sy={{ p: 5.0 }}>
                             <Grid container spacing={gridSpacing}>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={12}>
                                     <SubCard title="CAFF item 1">
                                         <Grid container direction="column" spacing={1}>
                                             <Grid item>
@@ -77,10 +76,10 @@ const Library = ({ isLoading }) => {
                                                         </ListItemAvatar>
                                                         <ListItemButton> Comment 1: Some comment here</ListItemButton>
                                                         <Box sx={{ maxWidth: 50 }} />
-                                                        <ListItemAvatar onClick={handleEditOpen} sx={{ m: 0.25 }}>
+                                                        <ListItemAvatar onClick={() => handleEditOpen()} sx={{ m: 0.25 }}>
                                                             <MyIcon icon={<EditIcon />} />
                                                         </ListItemAvatar>
-                                                        <ListItemAvatar onClick={handleDeleteOpen} sx={{ m: 0.25 }}>
+                                                        <ListItemAvatar onClick={() => handleDeleteOpen(id)} sx={{ m: 0.25 }}>
                                                             <MyIcon color={red[400]} icon={<DeleteIcon />} />
                                                         </ListItemAvatar>
                                                     </ListItem>
