@@ -14,13 +14,17 @@ import com.Biztonsagok.CAFFShop.repositories.UserCommentRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
 import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CaffPictureService {
@@ -108,5 +112,18 @@ public class CaffPictureService {
 			throw new Exception("Caff Picture does not exist!");
 		}
 		caffPictureRepository.deleteById(id);
+	}
+
+	public Optional<CaffPicture> updateOne(UUID id, CaffPictureRequestDTO caffPictureRequestDTO) {
+		Optional<CaffPicture> picture = caffPictureRepository.findById(id);
+		if(picture.isPresent()){
+			int oldPrice = picture.get().getPrice();
+			picture.get().setPrice(caffPictureRequestDTO.getPrice());
+			caffPictureRepository.save(picture.get());
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Updated CaffPicture({2}) property PRICE[{3} -> {4}]!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), picture.get().getId(), oldPrice, picture.get().getPrice()));
+		}
+		return picture;
 	}
 }

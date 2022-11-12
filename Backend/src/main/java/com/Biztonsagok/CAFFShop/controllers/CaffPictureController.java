@@ -109,6 +109,23 @@ public class CaffPictureController {
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
 	}
 
+	@PutMapping("/{id}")
+	public ResponseEntity<CaffPictureResponseDTO> updateOneCaffPicture(@PathVariable UUID id,
+																	   CaffPictureRequestDTO caffPictureRequestDTO){
+		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureRequestDTO);
+		if(caffPicture.isPresent()){
+			CaffPictureResponseDTO caffPictureResponseDTO = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture.get());
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Updated CaffPicture({2})!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), caffPicture.get().getId()));
+
+			return ResponseEntity.ok(caffPictureResponseDTO);
+		}
+		else {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
 	@PostMapping("/{id}/comments")
 	public ResponseEntity<Void> addUserCommentToCaffPicture(
 			@PathVariable UUID id,
