@@ -1,5 +1,6 @@
 package com.Biztonsagok.CAFFShop.models;
 
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ public class UserRole {
 	@Id
 	@GeneratedValue
 	@Type(type="uuid-char")
+	@JsonIgnore
 	private UUID id;
 
 	@Enumerated(EnumType.STRING)

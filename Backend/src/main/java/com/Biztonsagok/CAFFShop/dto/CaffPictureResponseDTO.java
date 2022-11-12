@@ -3,6 +3,7 @@ package com.Biztonsagok.CAFFShop.dto;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
 import com.Biztonsagok.CAFFShop.models.User;
 import com.Biztonsagok.CAFFShop.models.UserComment;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CaffPictureResponseDTO extends RepresentationModel<CaffPictureResponseDTO> {
 	private String title;
 	private String description;
@@ -23,14 +25,7 @@ public class CaffPictureResponseDTO extends RepresentationModel<CaffPictureRespo
 	public CaffPictureResponseDTO(CaffPicture caffPicture) {
 		this.title = caffPicture.getTitle();
 		this.description = caffPicture.getDescription();
-		this.userCommentList = caffPicture.getUserCommentList();
 		this.owner = caffPicture.getOwner();
-	}
-
-	public CaffPictureResponseDTO(String title, String description, List<UserComment> userCommentList, User owner) {
-		this.title = title;
-		this.description = description;
-		this.userCommentList = userCommentList;
-		this.owner = owner;
+		this.userCommentList = caffPicture.getUserCommentList();
 	}
 }
