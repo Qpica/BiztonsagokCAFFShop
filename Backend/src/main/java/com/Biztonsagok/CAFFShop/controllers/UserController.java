@@ -3,7 +3,9 @@ package com.Biztonsagok.CAFFShop.controllers;
 import com.Biztonsagok.CAFFShop.dto.UserRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.UserResponseDTO;
 import com.Biztonsagok.CAFFShop.models.User;
+import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,20 +13,30 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AuthenticationFacade authenticationFacade;
 
 	@GetMapping
 	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved all Users!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username()));
+
 		List<UserResponseDTO> responseDTOList = userService.getAllUsers().stream()
 				.map(
 						user -> userService.userResponseDTOFromUserSimple(user)
@@ -35,11 +47,19 @@ public class UserController {
 	@GetMapping("/{userName}")
 	public ResponseEntity<UserResponseDTO> getUserByUserName(@PathVariable String userName){
 		Optional<UserResponseDTO> result = userService.getUserResponseDTOByUserName(userName);
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved User({2})!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(result.get().getUserName(), "User not found!")));
+
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO){
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Registered User({2})!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), userRequestDTO.getUsername()));
+
 		Optional<User> registeredUser = userService.registerUser(userRequestDTO);
 		return registeredUser.map(user -> {
 							UserResponseDTO result = userService.userResponseDTOFromUserSimple(user);
@@ -54,6 +74,10 @@ public class UserController {
 	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable UUID id,
 														 @Valid @RequestBody UserRequestDTO userRequestDTO){
 		Optional<User> updatedUser = userService.updateUser(id, userRequestDTO);
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Updated User({2})!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(updatedUser.get().getUsername(), "User not found!")));
+
 		if(updatedUser.isPresent()){
 			UserResponseDTO result = userService.userResponseDTOFromUserSimple(updatedUser.get());
 			return ResponseEntity.accepted().body(result);
@@ -67,6 +91,10 @@ public class UserController {
 	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable UUID id){
 		Optional<User> result = userService.deleteUserById(id);
 		if(result.isPresent()){
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Deleted User({2})!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(result.get().getUsername(), "User not found!")));
+
 			return ResponseEntity.noContent().build();
 		}
 		else {

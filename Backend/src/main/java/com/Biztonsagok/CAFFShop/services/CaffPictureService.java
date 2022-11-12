@@ -102,4 +102,11 @@ public class CaffPictureService {
 		}
 		purchaseElementRepository.save(new PurchaseElement(authenticationFacade.getCurrentUserId().get(), id));
 	}
+
+	public void deleteOneCaffPictureById(UUID id) throws Exception {
+		if(!caffPictureRepository.existsById(id)){
+			throw new Exception("Caff Picture does not exist!");
+		}
+		caffPictureRepository.deleteById(id);
+	}
 }

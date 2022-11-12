@@ -49,7 +49,7 @@ public class CaffPicture {
 	@JsonBackReference
 	private User owner;
 
-	private int price;
+	private int price = 0;
 
 	public CaffPicture(String title, String description, byte[] caffPictureData, List<UserComment> userCommentList, User owner) {
 		this.title = title;
