@@ -5,19 +5,28 @@ import com.Biztonsagok.CAFFShop.dto.CaffPictureRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.CaffPictureResponseDTO;
 import com.Biztonsagok.CAFFShop.dto.UserCommentRequestDTO;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
+import com.Biztonsagok.CAFFShop.models.PurchaseElement;
 import com.Biztonsagok.CAFFShop.models.User;
 import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.Biztonsagok.CAFFShop.repositories.CaffPictureRepository;
+import com.Biztonsagok.CAFFShop.repositories.PurchaseElementRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserCommentRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
+import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
+@AllArgsConstructor
 public class CaffPictureService {
 	@Autowired
 	private CaffPictureRepository caffPictureRepository;
@@ -25,6 +34,10 @@ public class CaffPictureService {
 	private UserCommentRepository userCommentRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private PurchaseElementRepository purchaseElementRepository;
+	@Autowired
+	private final AuthenticationFacade authenticationFacade;
 
 	public Optional<CaffPicture> storeFile(CaffPicture caffPicture/*, MultipartFile caffPictureFile*/) throws IOException {
 		//String fileName = StringUtils.cleanPath(Objects.requireNonNull(caffPictureFile.getOriginalFilename()));
@@ -85,5 +98,32 @@ public class CaffPictureService {
 		//caffPicture.getUserCommentList().add(userComment);
 
 		userCommentRepository.save(userComment);
+	}
+
+	public void buyOneCaffPicture(UUID id) throws Exception {
+		if(!caffPictureRepository.existsById(id)){
+			throw new Exception("Caff Picture does not exist!");
+		}
+		purchaseElementRepository.save(new PurchaseElement(authenticationFacade.getCurrentUserId().get(), id));
+	}
+
+	public void deleteOneCaffPictureById(UUID id) throws Exception {
+		if(!caffPictureRepository.existsById(id)){
+			throw new Exception("Caff Picture does not exist!");
+		}
+		caffPictureRepository.deleteById(id);
+	}
+
+	public Optional<CaffPicture> updateOne(UUID id, CaffPictureRequestDTO caffPictureRequestDTO) {
+		Optional<CaffPicture> picture = caffPictureRepository.findById(id);
+		if(picture.isPresent()){
+			int oldPrice = picture.get().getPrice();
+			picture.get().setPrice(caffPictureRequestDTO.getPrice());
+			caffPictureRepository.save(picture.get());
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Updated CaffPicture({2}) property PRICE[{3} -> {4}]!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), picture.get().getId(), oldPrice, picture.get().getPrice()));
+		}
+		return picture;
 	}
 }

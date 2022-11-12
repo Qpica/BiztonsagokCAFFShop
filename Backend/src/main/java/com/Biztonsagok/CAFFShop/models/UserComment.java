@@ -1,6 +1,7 @@
 package com.Biztonsagok.CAFFShop.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -15,6 +16,7 @@ public class UserComment {
 	@Id
 	@GeneratedValue
 	@Type(type="uuid-char")
+	@JsonIgnore
 	private UUID id;
 
 	@NotBlank
