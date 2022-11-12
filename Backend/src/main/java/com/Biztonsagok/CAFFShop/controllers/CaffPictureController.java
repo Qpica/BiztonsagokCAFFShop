@@ -95,4 +95,15 @@ public class CaffPictureController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+	@PostMapping("/{id}/buy")
+	public ResponseEntity<Void> buyOneCaffPicture(@PathVariable UUID id){
+		try {
+			caffPictureService.buyOneCaffPicture(id);
+		}
+		catch (Exception ignored){
+			return ResponseEntity.badRequest().build();
+		}
+		return ResponseEntity.ok().build();
+	}
 }
