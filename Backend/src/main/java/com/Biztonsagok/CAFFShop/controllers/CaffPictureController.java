@@ -14,6 +14,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -111,6 +112,7 @@ public class CaffPictureController {
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<CaffPictureResponseDTO> updateOneCaffPicture(@PathVariable UUID id,
 																	   CaffPictureRequestDTO caffPictureRequestDTO){
 		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureRequestDTO);
@@ -165,6 +167,7 @@ public class CaffPictureController {
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Void> deleteOneCaffPictureById(@PathVariable UUID id){
 		try {
 			caffPictureService.deleteOneCaffPictureById(id);

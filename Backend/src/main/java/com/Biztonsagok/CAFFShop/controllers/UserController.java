@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -45,7 +47,11 @@ public class UserController {
 
 		List<UserResponseDTO> responseDTOList = userService.getAllUsers().stream()
 				.map(
-						user -> userService.userResponseDTOFromUserSimple(user)
+						user -> {
+							UserResponseDTO result = userService.userResponseDTOFromUserSimple(user);
+							result.add(linkTo(methodOn(UserController.class).getUserByUserName(result.getUserName())).withSelfRel());
+							return result;
+						}
 				).collect(Collectors.toList());
 		CollectionModel<UserResponseDTO> collectionModel = CollectionModel.of(responseDTOList);
 		collectionModel.add(linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
@@ -55,9 +61,9 @@ public class UserController {
 	@GetMapping("/{userName}")
 	public ResponseEntity<UserResponseDTO> getUserByUserName(@PathVariable String userName){
 		Optional<UserResponseDTO> result = userService.getUserResponseDTOByUserName(userName);
-
+		String logMessage = result.isPresent() ? result.get().getUserName() : "User not found!";
 		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved User({2})!", LocalDateTime.now().toString(),
-				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(result.get().getUserName(), "User not found!")));
+				authenticationFacade.getCurrentUserFromContext().get().username(), logMessage));
 
 		if(result.isPresent()){
 			result.get().add(linkTo(methodOn(UserController.class).getUserByUserName(userName)).withSelfRel());
@@ -83,6 +89,8 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}")
+	//@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@Secured("ROLE_ADMINISTRATOR")
 	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable UUID id,
 														 @Valid @RequestBody UserRequestDTO userRequestDTO){
 		Optional<User> updatedUser = userService.updateUser(id, userRequestDTO);
@@ -102,6 +110,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("@AuthenticationService.hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable UUID id){
 		Optional<User> result = userService.deleteUserById(id);
 		if(result.isPresent()){
