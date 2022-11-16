@@ -3,21 +3,21 @@ package com.Biztonsagok.CAFFShop.services;
 import com.Biztonsagok.CAFFShop.dto.UserRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.UserResponseDTO;
 import com.Biztonsagok.CAFFShop.models.User;
-import com.Biztonsagok.CAFFShop.repositories.CaffPictureRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	@Autowired
-	private CaffPictureRepository caffPictureRepository;
 	@Autowired
 	private PasswordEncoder encoder;
 
@@ -45,16 +45,14 @@ public class UserService {
 		return Optional.of(userToRegister);
 	}
 
-	public Optional<User> deleteUserById(UUID id) {
-		Optional<User> userToDelete = userRepository.findById(id);
-		if(userToDelete.isPresent()){
-			userRepository.deleteById(id);
-		}
+	public Optional<User> deleteUserById(String id) {
+		Optional<User> userToDelete = userRepository.findByUsername(id);
+		userToDelete.ifPresent(user -> userRepository.deleteById(user.getId()));
 		return userToDelete;
 	}
 
-	public Optional<User> updateUser(UUID id, UserRequestDTO userRequestDTO) {
-		Optional<User> userToUpdate = userRepository.findById(id);
+	public Optional<User> updateUser(String id, UserRequestDTO userRequestDTO) {
+		Optional<User> userToUpdate = userRepository.findByUsername(id);
 		if(userToUpdate.isPresent()){
 			updateUserFrom(userRequestDTO, userToUpdate.get());
 			userRepository.save(userToUpdate.get());

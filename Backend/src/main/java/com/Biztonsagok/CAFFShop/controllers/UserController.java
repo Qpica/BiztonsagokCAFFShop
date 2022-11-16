@@ -1,6 +1,5 @@
 package com.Biztonsagok.CAFFShop.controllers;
 
-import com.Biztonsagok.CAFFShop.dto.CaffPictureResponseDTO;
 import com.Biztonsagok.CAFFShop.dto.UserRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.UserResponseDTO;
 import com.Biztonsagok.CAFFShop.models.User;
@@ -88,12 +87,11 @@ public class UserController {
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
 	}
 
-	@PutMapping("/{id}")
-	//@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	@Secured("ROLE_ADMINISTRATOR")
-	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable UUID id,
+	@PutMapping("/{userName}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
+	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable String userName,
 														 @Valid @RequestBody UserRequestDTO userRequestDTO){
-		Optional<User> updatedUser = userService.updateUser(id, userRequestDTO);
+		Optional<User> updatedUser = userService.updateUser(userName, userRequestDTO);
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Updated User({2})!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(updatedUser.get().getUsername(), "User not found!")));
@@ -109,10 +107,10 @@ public class UserController {
 		}
 	}
 
-	@DeleteMapping("/{id}")
-	@PreAuthorize("@AuthenticationService.hasRole('ROLE_ADMINISTRATOR')")
-	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable UUID id){
-		Optional<User> result = userService.deleteUserById(id);
+	@DeleteMapping("/{userName}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
+	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable String userName){
+		Optional<User> result = userService.deleteUserById(userName);
 		if(result.isPresent()){
 
 			log.info(MessageFormat.format("[{0}]::[{1}]: Deleted User({2})!", LocalDateTime.now().toString(),

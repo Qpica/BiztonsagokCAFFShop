@@ -2,21 +2,16 @@ package com.Biztonsagok.CAFFShop.security.service;
 
 import com.Biztonsagok.CAFFShop.models.User;
 import com.Biztonsagok.CAFFShop.models.UserRole;
-import com.Biztonsagok.CAFFShop.models.UserRoleType;
 import com.Biztonsagok.CAFFShop.security.exception.UserNotFoundException;
 import com.Biztonsagok.CAFFShop.security.exception.WrongPasswordException;
 import com.Biztonsagok.CAFFShop.security.service.dto.LoginResult;
 import com.Biztonsagok.CAFFShop.security.service.dto.RefreshTokenResult;
 import com.Biztonsagok.CAFFShop.services.UserService;
-
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service("authenticationService")
 @AllArgsConstructor

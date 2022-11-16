@@ -167,7 +167,7 @@ public class CaffPictureController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Void> deleteOneCaffPictureById(@PathVariable UUID id){
 		try {
 			caffPictureService.deleteOneCaffPictureById(id);
