@@ -1,5 +1,6 @@
 package com.Biztonsagok.CAFFShop.controllers;
 
+import com.Biztonsagok.CAFFShop.dto.CaffPictureResponseDTO;
 import com.Biztonsagok.CAFFShop.dto.UserRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.UserResponseDTO;
 import com.Biztonsagok.CAFFShop.models.User;
@@ -7,6 +8,8 @@ import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,6 +24,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
@@ -32,7 +38,7 @@ public class UserController {
 	private AuthenticationFacade authenticationFacade;
 
 	@GetMapping
-	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+	public ResponseEntity<CollectionModel<UserResponseDTO>> getAllUsers() {
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved all Users!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username()));
@@ -41,7 +47,9 @@ public class UserController {
 				.map(
 						user -> userService.userResponseDTOFromUserSimple(user)
 				).collect(Collectors.toList());
-		return ResponseEntity.ok(responseDTOList);
+		CollectionModel<UserResponseDTO> collectionModel = CollectionModel.of(responseDTOList);
+		collectionModel.add(linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
+		return ResponseEntity.ok(collectionModel);
 	}
 
 	@GetMapping("/{userName}")
@@ -51,6 +59,10 @@ public class UserController {
 		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved User({2})!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(result.get().getUserName(), "User not found!")));
 
+		if(result.isPresent()){
+			result.get().add(linkTo(methodOn(UserController.class).getUserByUserName(userName)).withSelfRel());
+			result.get().add(linkTo(methodOn(UserController.class).getAllUsers()).withRel(IanaLinkRelations.COLLECTION));
+		}
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
@@ -80,6 +92,8 @@ public class UserController {
 
 		if(updatedUser.isPresent()){
 			UserResponseDTO result = userService.userResponseDTOFromUserSimple(updatedUser.get());
+			result.add(linkTo(methodOn(UserController.class).getUserByUserName(result.getUserName())).withSelfRel());
+			result.add().add(linkTo(methodOn(UserController.class).getAllUsers()).withRel(IanaLinkRelations.COLLECTION));
 			return ResponseEntity.accepted().body(result);
 		}
 		else {

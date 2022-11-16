@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.minidev.json.annotate.JsonIgnore;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserResponseDTO {
+public class UserResponseDTO extends RepresentationModel<UserResponseDTO> {
 	private String userName;
 	private Set<UserRole> roles = new HashSet<>();
 
