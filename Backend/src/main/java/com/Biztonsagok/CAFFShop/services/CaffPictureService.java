@@ -1,9 +1,6 @@
 package com.Biztonsagok.CAFFShop.services;
 
-import com.Biztonsagok.CAFFShop.dto.CaffPictureDataResponseDTO;
-import com.Biztonsagok.CAFFShop.dto.CaffPictureRequestDTO;
-import com.Biztonsagok.CAFFShop.dto.CaffPictureResponseDTO;
-import com.Biztonsagok.CAFFShop.dto.UserCommentRequestDTO;
+import com.Biztonsagok.CAFFShop.dto.*;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
 import com.Biztonsagok.CAFFShop.models.PurchaseElement;
 import com.Biztonsagok.CAFFShop.models.User;
@@ -23,6 +20,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,12 +57,25 @@ public class CaffPictureService {
 		result.setTitle(caffPictureRequestDTO.getTitle());
 		result.setDescription(caffPictureRequestDTO.getDescription());
 		result.setCaffPictureData(caffPictureRequestDTO.getCaffFile().getBytes());
+		result.setPrice(caffPictureRequestDTO.getPrice());
 		userRepository.findByUsername(caffPictureRequestDTO.getOwnerUserName()).ifPresent(result::setOwner);
 		return result;
 	}
 
 	public CaffPictureResponseDTO caffPictureResponseDTOFromCaffPicture(CaffPicture caffPicture){
-		return new CaffPictureResponseDTO(caffPicture);
+		CaffPictureResponseDTO result = new CaffPictureResponseDTO(caffPicture);
+
+		UserResponseDTO owner = new UserResponseDTO(userRepository.findByUsername(authenticationFacade.getCurrentUserFromContext().get().username()));
+		if(caffPicture.getUserCommentList() != null) {
+			List<UserCommentResponseDTO> ownerComments = caffPicture.getUserCommentList().stream().map(
+					userComment -> {
+						return new UserCommentResponseDTO(userComment.getComment_value(), userComment.getOwner().getUsername());
+					}
+			).toList();
+			result.setUserCommentList(ownerComments);
+		}
+		result.setOwner(owner);
+		return result;
 	}
 
 	public CaffPictureDataResponseDTO caffPictureResponseDataDTOFromCaffPicture(CaffPicture caffPicture){
@@ -81,15 +92,12 @@ public class CaffPictureService {
 		return result.map(this::caffPictureResponseDataDTOFromCaffPicture);
 	}
 
-	public Optional<CaffPicture> addUserCommentToCaffPicture(UUID id, UserCommentRequestDTO userCommentRequestDTO) {
+	public Optional<UserComment> addUserCommentToCaffPicture(UUID id, UserCommentRequestDTO userCommentRequestDTO) {
 		Optional<CaffPicture> result = caffPictureRepository.findById(id);
-		if(result.isPresent()){
-			addUserCommentFrom(userCommentRequestDTO, result.get());
-		}
-		return result;
+		return result.map(caffPicture -> addUserCommentFrom(userCommentRequestDTO, caffPicture));
 	}
 
-	private void addUserCommentFrom(UserCommentRequestDTO userCommentRequestDTO, CaffPicture caffPicture) {
+	private UserComment addUserCommentFrom(UserCommentRequestDTO userCommentRequestDTO, CaffPicture caffPicture) {
 		UserComment userComment = new UserComment(userCommentRequestDTO.getComment_value());
 
 		Optional<User> loggedInUser = userRepository.findByUsername("admin");
@@ -97,7 +105,7 @@ public class CaffPictureService {
 		userComment.setCaffPicture(caffPicture);
 		//caffPicture.getUserCommentList().add(userComment);
 
-		userCommentRepository.save(userComment);
+		return userCommentRepository.save(userComment);
 	}
 
 	public void buyOneCaffPicture(UUID id) throws Exception {

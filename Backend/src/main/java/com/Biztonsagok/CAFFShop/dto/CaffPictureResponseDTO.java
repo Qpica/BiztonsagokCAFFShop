@@ -18,14 +18,13 @@ import java.util.List;
 public class CaffPictureResponseDTO extends RepresentationModel<CaffPictureResponseDTO> {
 	private String title;
 	private String description;
-	private List<UserComment> userCommentList;
-	private User owner;
+	private List<UserCommentResponseDTO> userCommentList;
+	private UserResponseDTO owner;
 	private int price;
 
 	public CaffPictureResponseDTO(CaffPicture caffPicture) {
 		this.title = caffPicture.getTitle();
 		this.description = caffPicture.getDescription();
-		this.owner = caffPicture.getOwner();
-		this.userCommentList = caffPicture.getUserCommentList();
+		this.price = caffPicture.getPrice();
 	}
 }

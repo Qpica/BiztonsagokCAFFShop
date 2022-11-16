@@ -2,6 +2,7 @@ package com.Biztonsagok.CAFFShop.controllers;
 
 import com.Biztonsagok.CAFFShop.dto.*;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
+import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.CaffPictureService;
 import lombok.extern.slf4j.Slf4j;
@@ -134,12 +135,12 @@ public class CaffPictureController {
 		log.info(MessageFormat.format("[{0}]::[{1}]: Added Comment CaffPicture({2})!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username()));
 
-		Optional<CaffPicture> caffPictureWithAddedComment = caffPictureService.addUserCommentToCaffPicture(id,
+		Optional<UserComment> addedUserComment = caffPictureService.addUserCommentToCaffPicture(id,
 				userCommentRequestDTO);
-		if(caffPictureWithAddedComment.isPresent()){
+		if(addedUserComment.isPresent()){
 
 			log.info(MessageFormat.format("[{0}]::[{1}]: Saved Comment({2}) for CaffPicture({3})!", LocalDateTime.now().toString(),
-					authenticationFacade.getCurrentUserFromContext().get().username(), caffPictureWithAddedComment.get().getId(), id));
+					authenticationFacade.getCurrentUserFromContext().get().username(), addedUserComment.get().getId(), id));
 
 			return ResponseEntity.ok().build();
 		}
