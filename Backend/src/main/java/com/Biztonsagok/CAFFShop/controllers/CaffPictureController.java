@@ -122,6 +122,9 @@ public class CaffPictureController {
 			log.info(MessageFormat.format("[{0}]::[{1}]: Updated CaffPicture({2})!", LocalDateTime.now().toString(),
 					authenticationFacade.getCurrentUserFromContext().get().username(), caffPicture.get().getId()));
 
+			caffPictureResponseDTO.add(linkTo(methodOn(CaffPictureController.class).getOneCaffPicture(id)).withSelfRel());
+			caffPictureResponseDTO.add(linkTo(methodOn(CaffPictureController.class).getAllCaffPicture()).withRel(IanaLinkRelations.COLLECTION));
+
 			return ResponseEntity.ok(caffPictureResponseDTO);
 		}
 		else {
@@ -135,7 +138,7 @@ public class CaffPictureController {
 			@Valid @RequestBody UserCommentRequestDTO userCommentRequestDTO){
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Added Comment CaffPicture({2})!", LocalDateTime.now().toString(),
-				authenticationFacade.getCurrentUserFromContext().get().username()));
+				authenticationFacade.getCurrentUserFromContext().get().username(), id));
 
 		Optional<UserComment> addedUserComment = caffPictureService.addUserCommentToCaffPicture(id,
 				userCommentRequestDTO);
@@ -178,6 +181,6 @@ public class CaffPictureController {
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Deleted CaffPicture({2})!", LocalDateTime.now().toString(), authenticationFacade.getCurrentUserFromContext().get().username(), id));
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 }

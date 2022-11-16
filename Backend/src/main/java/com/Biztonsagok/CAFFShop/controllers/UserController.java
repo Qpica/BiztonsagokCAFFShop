@@ -74,8 +74,7 @@ public class UserController {
 	@PostMapping("/register")
 	public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO){
 
-		log.info(MessageFormat.format("[{0}]::[{1}]: Registered User({2})!", LocalDateTime.now().toString(),
-				authenticationFacade.getCurrentUserFromContext().get().username(), userRequestDTO.getUsername()));
+		log.info(MessageFormat.format("[{0}]::[User Registration]: Registered User({1})!", LocalDateTime.now().toString(), userRequestDTO.getUsername()));
 
 		Optional<User> registeredUser = userService.registerUser(userRequestDTO);
 		return registeredUser.map(user -> {
