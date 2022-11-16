@@ -7,7 +7,11 @@ import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,6 +25,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
@@ -32,33 +39,42 @@ public class UserController {
 	private AuthenticationFacade authenticationFacade;
 
 	@GetMapping
-	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+	public ResponseEntity<CollectionModel<UserResponseDTO>> getAllUsers() {
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved all Users!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username()));
 
 		List<UserResponseDTO> responseDTOList = userService.getAllUsers().stream()
 				.map(
-						user -> userService.userResponseDTOFromUserSimple(user)
+						user -> {
+							UserResponseDTO result = userService.userResponseDTOFromUserSimple(user);
+							result.add(linkTo(methodOn(UserController.class).getUserByUserName(result.getUserName())).withSelfRel());
+							return result;
+						}
 				).collect(Collectors.toList());
-		return ResponseEntity.ok(responseDTOList);
+		CollectionModel<UserResponseDTO> collectionModel = CollectionModel.of(responseDTOList);
+		collectionModel.add(linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
+		return ResponseEntity.ok(collectionModel);
 	}
 
 	@GetMapping("/{userName}")
 	public ResponseEntity<UserResponseDTO> getUserByUserName(@PathVariable String userName){
 		Optional<UserResponseDTO> result = userService.getUserResponseDTOByUserName(userName);
-
+		String logMessage = result.isPresent() ? result.get().getUserName() : "User not found!";
 		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved User({2})!", LocalDateTime.now().toString(),
-				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(result.get().getUserName(), "User not found!")));
+				authenticationFacade.getCurrentUserFromContext().get().username(), logMessage));
 
+		if(result.isPresent()){
+			result.get().add(linkTo(methodOn(UserController.class).getUserByUserName(userName)).withSelfRel());
+			result.get().add(linkTo(methodOn(UserController.class).getAllUsers()).withRel(IanaLinkRelations.COLLECTION));
+		}
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO){
 
-		log.info(MessageFormat.format("[{0}]::[{1}]: Registered User({2})!", LocalDateTime.now().toString(),
-				authenticationFacade.getCurrentUserFromContext().get().username(), userRequestDTO.getUsername()));
+		log.info(MessageFormat.format("[{0}]::[User Registration]: Registered User({1})!", LocalDateTime.now().toString(), userRequestDTO.getUsername()));
 
 		Optional<User> registeredUser = userService.registerUser(userRequestDTO);
 		return registeredUser.map(user -> {
@@ -70,16 +86,19 @@ public class UserController {
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable UUID id,
+	@PutMapping("/{userName}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
+	public ResponseEntity<UserResponseDTO> updateOneUser(@PathVariable String userName,
 														 @Valid @RequestBody UserRequestDTO userRequestDTO){
-		Optional<User> updatedUser = userService.updateUser(id, userRequestDTO);
+		Optional<User> updatedUser = userService.updateUser(userName, userRequestDTO);
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Updated User({2})!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username(), Objects.requireNonNullElse(updatedUser.get().getUsername(), "User not found!")));
 
 		if(updatedUser.isPresent()){
 			UserResponseDTO result = userService.userResponseDTOFromUserSimple(updatedUser.get());
+			result.add(linkTo(methodOn(UserController.class).getUserByUserName(result.getUserName())).withSelfRel());
+			result.add().add(linkTo(methodOn(UserController.class).getAllUsers()).withRel(IanaLinkRelations.COLLECTION));
 			return ResponseEntity.accepted().body(result);
 		}
 		else {
@@ -87,9 +106,10 @@ public class UserController {
 		}
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable UUID id){
-		Optional<User> result = userService.deleteUserById(id);
+	@DeleteMapping("/{userName}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
+	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable String userName){
+		Optional<User> result = userService.deleteUserById(userName);
 		if(result.isPresent()){
 
 			log.info(MessageFormat.format("[{0}]::[{1}]: Deleted User({2})!", LocalDateTime.now().toString(),
