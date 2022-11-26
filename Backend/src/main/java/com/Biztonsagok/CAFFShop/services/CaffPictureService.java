@@ -134,4 +134,8 @@ public class CaffPictureService {
 		}
 		return picture;
 	}
+
+	public List<CaffPicture> searchByTitle(String title) {
+		return caffPictureRepository.findByTitleContainingIgnoreCase(title);
+	}
 }

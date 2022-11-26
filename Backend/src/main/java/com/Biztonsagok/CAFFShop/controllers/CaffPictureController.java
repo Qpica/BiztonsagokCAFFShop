@@ -57,6 +57,24 @@ public class CaffPictureController {
 		return ResponseEntity.ok(collectionModel);
 	}
 
+	@GetMapping("/search")
+	public ResponseEntity<CollectionModel<CaffPictureResponseDTO>> searchCaffPictureByTitle(@RequestParam("Title") String title){
+		log.info(MessageFormat.format("[{0}]::[{1}]: Searched for CaffPictures by Param:[{2}]!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), title));
+
+		List<CaffPictureResponseDTO> responseDTOList = caffPictureService.searchByTitle(title).stream()
+				.map(
+						caffPicture -> {
+							CaffPictureResponseDTO result = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture);
+							result.add(linkTo(methodOn(CaffPictureController.class).getOneCaffPicture(caffPicture.getId())).withSelfRel());
+							return result;
+						}
+				).collect(Collectors.toList());
+		CollectionModel<CaffPictureResponseDTO> collectionModel = CollectionModel.of(responseDTOList);
+		collectionModel.add(linkTo(methodOn(CaffPictureController.class).getAllCaffPicture()).withSelfRel());
+		return ResponseEntity.ok(collectionModel);
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<CaffPictureResponseDTO> getOneCaffPicture(@PathVariable UUID id){
 
