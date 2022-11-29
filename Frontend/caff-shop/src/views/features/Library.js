@@ -20,6 +20,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CommentIcon from '@mui/icons-material/ChatBubble';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import MyIcon from './MyIcon';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { caffActions, userActions } from '_store';
 
 const sampleItems = [
     {
@@ -74,6 +77,14 @@ const Library = ({ isLoading }) => {
         var newItems = items.filter((i) => i.id !== item.id);
         setItems(newItems);
     };
+
+    const dispatch = useDispatch();
+    const caffPictures = useSelector((x) => x.caff.allCaffPicture);
+
+    useEffect(() => {
+        dispatch(caffActions.getAllCaffPicture());
+        dispatch(caffActions.getOneCaffPicture({ id: 1 }));
+    });
 
     return (
         <MainCard title="Library">

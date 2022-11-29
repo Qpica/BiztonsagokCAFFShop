@@ -11,11 +11,16 @@ import themes from 'themes';
 
 // project imports
 import NavigationScroll from 'layout/NavigationScroll';
+import { history } from '_helpers/history';
+import { useLocation, useNavigate } from 'react-router';
 
 // ==============================|| APP ||============================== //
 
 const App = () => {
     const customization = useSelector((state) => state.customization);
+
+    history.navigate = useNavigate();
+    history.location = useLocation();
 
     return (
         <StyledEngineProvider injectFirst>

@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@CrossOrigin("http://localhost:3000/")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

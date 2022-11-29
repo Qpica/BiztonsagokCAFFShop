@@ -2,6 +2,7 @@ import { lazy } from 'react';
 
 // project imports
 import MainLayout from 'layout/MainLayout';
+import { PrivateRoute } from 'ui-component/PrivateRoute';
 import Loadable from 'ui-component/Loadable';
 import { element } from 'prop-types';
 
@@ -13,7 +14,11 @@ const LibraryPath = Loadable(lazy(() => import('views/features/Library')));
 
 const MainRoutes = {
     path: '/',
-    element: <MainLayout />,
+    element: (
+        <PrivateRoute>
+            <MainLayout />
+        </PrivateRoute>
+    ),
     children: [
         {
             path: '/',

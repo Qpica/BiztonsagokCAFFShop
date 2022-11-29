@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+/*import { combineReducers } from 'redux';
 
 // reducer import
 import customizationReducer from './customizationReducer';
@@ -10,3 +10,4 @@ const reducer = combineReducers({
 });
 
 export default reducer;
+*/

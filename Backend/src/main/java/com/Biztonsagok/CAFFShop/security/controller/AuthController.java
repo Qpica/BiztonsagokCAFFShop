@@ -3,11 +3,14 @@ package com.Biztonsagok.CAFFShop.security.controller;
 import com.Biztonsagok.CAFFShop.security.controller.dto.*;
 import com.Biztonsagok.CAFFShop.security.service.AuthenticationService;
 import lombok.AllArgsConstructor;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin("http://localhost:3000/")
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor

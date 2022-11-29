@@ -1,5 +1,10 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSelector, useDispatch } from 'react-redux';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import { history } from '../../../../_helpers/history';
+import { authActions, userActions } from '_store';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -33,20 +38,16 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import Google from 'assets/images/icons/social-google.svg';
+// ============================|| LOGIN ||============================ //
 
-// ============================|| FIREBASE - LOGIN ||============================ //
+const Login = ({ ...others }) => {
+    const dispatch = useDispatch();
+    const authUser = useSelector((x) => x.auth.user);
+    const authError = useSelector((x) => x.auth.error);
 
-const FirebaseLogin = ({ ...others }) => {
     const theme = useTheme();
     const scriptedRef = useScriptRef();
-    const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const customization = useSelector((state) => state.customization);
     const [checked, setChecked] = useState(true);
-
-    const googleHandler = async () => {
-        console.error('Login');
-    };
 
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => {
@@ -56,6 +57,24 @@ const FirebaseLogin = ({ ...others }) => {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    useEffect(() => {
+        // redirect to home if already logged in
+        if (authUser) history.navigate('/');
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // form validation rules
+    /*const validationSchema = Yup.object().shape({
+        username: Yup.string().required('Username is required'),
+        password: Yup.string().required('Password is required')
+    });
+    const formOptions = { resolver: yupResolver(validationSchema) };*/
+
+    // get functions to build form with useForm() hook
+    //const { register, handleSubmit, formState } = useForm(formOptions);
+    //const { errors, isSubmitting } = formState;
 
     return (
         <>
@@ -70,25 +89,23 @@ const FirebaseLogin = ({ ...others }) => {
                         <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
                     </Box>
                 </Grid>
-                <Grid item xs={12} container alignItems="center" justifyContent="center">
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1">Sign in with Email address</Typography>
-                    </Box>
-                </Grid>
             </Grid>
 
             <Formik
                 initialValues={{
-                    email: 'info@codedthemes.com',
-                    password: '123456',
+                    username: 'test',
+                    password: '123',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                    username: Yup.string().max(255).required('Username is required'),
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    try {
+                    dispatch(authActions.login({ username: values.username, password: values.password }));
+                    //dispatch(userActions.register({ username: values.username, password: values.password }));
+
+                    /*try {
                         if (scriptedRef.current) {
                             setStatus({ success: true });
                             setSubmitting(false);
@@ -100,26 +117,30 @@ const FirebaseLogin = ({ ...others }) => {
                             setErrors({ submit: err.message });
                             setSubmitting(false);
                         }
-                    }
+                    }*/
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>
-                        <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+                        <FormControl
+                            fullWidth
+                            error={Boolean(touched.username && errors.username)}
+                            sx={{ ...theme.typography.customInput }}
+                        >
+                            <InputLabel htmlFor="outlined-adornment-username-login">Username</InputLabel>
                             <OutlinedInput
-                                id="outlined-adornment-email-login"
-                                type="email"
-                                value={values.email}
-                                name="email"
+                                id="outlined-adornment-username-login"
+                                type="text"
+                                value={values.username}
+                                name="username"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
-                                label="Email Address"
+                                label="Username"
                                 inputProps={{}}
                             />
-                            {touched.email && errors.email && (
-                                <FormHelperText error id="standard-weight-helper-text-email-login">
-                                    {errors.email}
+                            {touched.username && errors.username && (
+                                <FormHelperText error id="standard-weight-helper-text-username-login">
+                                    {errors.username}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -203,4 +224,4 @@ const FirebaseLogin = ({ ...others }) => {
     );
 };
 
-export default FirebaseLogin;
+export default Login;

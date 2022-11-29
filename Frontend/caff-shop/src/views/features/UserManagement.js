@@ -14,6 +14,11 @@ import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from 'store/constant';
 import MyIcon from './MyIcon';
 
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { userActions } from '_store';
+
 const sampleUsers = [
     { id: 1, name: 'Kovacs Zoltan' },
     { id: 2, name: 'Nagy Bela' },
@@ -23,9 +28,17 @@ const sampleUsers = [
 const UserManagement = ({ isLoading }) => {
     const theme = useTheme();
 
-    const [users, setUsers] = React.useState(sampleUsers);
+    //const [users, setUsers] = React.useState(sampleUsers);
     const [selectedUserId, setSelectedUserId] = React.useState(null);
     const [openDelete, setOpenDelete] = React.useState(false);
+
+    const dispatch = useDispatch();
+    const { user: authUser } = useSelector((x) => x.auth);
+    const { users: users, error: usersError } = useSelector((x) => x.users);
+
+    useEffect(() => {
+        dispatch(userActions.getAll());
+    }, []);
 
     const handleDeleteOpen = (id) => {
         setOpenDelete(true);
@@ -72,16 +85,16 @@ const UserManagement = ({ isLoading }) => {
                 <Grid container direction="column">
                     <Grid item sy={{ p: 5.0 }}>
                         <List sx={{ maxWidth: 450 }}>
-                            {users.map((user) => {
+                            {Object.keys(users).map((index) => {
                                 return (
-                                    <div key={user.id}>
+                                    <div key={index}>
                                         <ListItem>
                                             <ListItemAvatar onClick={() => handleSelectedOpen()}>
                                                 <MyIcon icon={<User fontSize="inherit" />} />
                                             </ListItemAvatar>
-                                            <ListItemButton onClick={() => handleSelectedOpen()}>{user.name}</ListItemButton>
+                                            <ListItemButton onClick={() => handleSelectedOpen()}>{users[index].userName}</ListItemButton>
                                             <Box sx={{ maxWidth: 50 }} />
-                                            <ListItemAvatar onClick={() => handleDeleteOpen(user.id)} sx={{ m: 2 }}>
+                                            <ListItemAvatar onClick={() => handleDeleteOpen(item.userName)} sx={{ m: 2 }}>
                                                 <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
                                             </ListItemAvatar>
                                         </ListItem>
