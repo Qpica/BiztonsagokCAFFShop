@@ -7,7 +7,6 @@ import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.CaffPictureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;

@@ -1,8 +1,6 @@
 package com.Biztonsagok.CAFFShop.dto;
 
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
-import com.Biztonsagok.CAFFShop.models.User;
-import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

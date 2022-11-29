@@ -34,6 +34,7 @@ public class AuthController {
 				.build();
 	}
 
+	/*
 	@PostMapping("/register")
 	public void register(@RequestBody RegisterRequest registerRequest) {
 		authenticationService.register(registerRequest.username(), registerRequest.password());
@@ -41,7 +42,7 @@ public class AuthController {
 		log.info(MessageFormat.format("[{0}]::[User Registration]: User({1}) registered!", LocalDateTime.now().toString(), registerRequest.username()));
 
 	}
-
+	 */
 	@PostMapping("/refresh")
 	public RefreshTokenResponse refresh(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 
