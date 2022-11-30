@@ -2,19 +2,26 @@ package com.Biztonsagok.CAFFShop.controllers;
 
 import com.Biztonsagok.CAFFShop.dto.*;
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
+import com.Biztonsagok.CAFFShop.models.UserComment;
+import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.CaffPictureService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,16 +29,21 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
-@CrossOrigin("http://localhost:3000/")
+@Slf4j
 @RestController
 @RequestMapping("/api/caffPictures")
 public class CaffPictureController {
 	@Autowired
 	private CaffPictureService caffPictureService;
+	@Autowired
+	private AuthenticationFacade authenticationFacade;
 
 	@GetMapping
 	public ResponseEntity<CollectionModel<CaffPictureResponseDTO>> getAllCaffPicture(){
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved all CaffPictures!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username()));
+
 		List<CaffPictureResponseDTO> responseDTOList = caffPictureService.getAllCaffPicture().stream()
 				.map(
 					caffPicture -> {
@@ -47,6 +59,10 @@ public class CaffPictureController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<CaffPictureResponseDTO> getOneCaffPicture(@PathVariable UUID id){
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Retrieved CaffPicture({2})!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), id));
+
 		Optional<CaffPictureResponseDTO> result = caffPictureService.getCaffPictureResponseDTO(id);
 		if(result.isPresent()){
 			result.get().add(linkTo(methodOn(CaffPictureController.class).getOneCaffPicture(id)).withSelfRel());
@@ -57,6 +73,10 @@ public class CaffPictureController {
 
 	@GetMapping("/{id}/data")
 	public ResponseEntity<CaffPictureDataResponseDTO> getOneCaffPictureData(@PathVariable UUID id){
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Downloaded CaffPicture({2})!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), id));
+
 		Optional<CaffPictureDataResponseDTO> result = caffPictureService.getCaffPictureDataResponseDTO(id);
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
@@ -66,11 +86,19 @@ public class CaffPictureController {
 	public ResponseEntity<CaffPictureResponseDTO> addCaffPicture(
 			@Valid @ModelAttribute @NotNull CaffPictureRequestDTO caffPictureRequestDTO
 			){
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Added CaffPicture!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username()));
+
 		Optional<CaffPicture> storedCaffPicture;
 		try {
 			storedCaffPicture = caffPictureService.storeFile(
 					caffPictureService.caffPictureFromCaffPictureRequestDTO(caffPictureRequestDTO)
 			);
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Saved CaffPicture({2})!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), storedCaffPicture.get().getId()));
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -83,17 +111,76 @@ public class CaffPictureController {
 		}).orElseGet(() -> ResponseEntity.badRequest().build());
 	}
 
+	@PutMapping("/{id}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
+	public ResponseEntity<CaffPictureResponseDTO> updateOneCaffPicture(@PathVariable UUID id,
+																	   CaffPictureRequestDTO caffPictureRequestDTO){
+		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureRequestDTO);
+		if(caffPicture.isPresent()){
+			CaffPictureResponseDTO caffPictureResponseDTO = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture.get());
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Updated CaffPicture({2})!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), caffPicture.get().getId()));
+
+			caffPictureResponseDTO.add(linkTo(methodOn(CaffPictureController.class).getOneCaffPicture(id)).withSelfRel());
+			caffPictureResponseDTO.add(linkTo(methodOn(CaffPictureController.class).getAllCaffPicture()).withRel(IanaLinkRelations.COLLECTION));
+
+			return ResponseEntity.ok(caffPictureResponseDTO);
+		}
+		else {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+
 	@PostMapping("/{id}/comments")
 	public ResponseEntity<Void> addUserCommentToCaffPicture(
 			@PathVariable UUID id,
 			@Valid @RequestBody UserCommentRequestDTO userCommentRequestDTO){
-		Optional<CaffPicture> caffPictureWithAddedComment = caffPictureService.addUserCommentToCaffPicture(id,
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Added Comment CaffPicture({2})!", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), id));
+
+		Optional<UserComment> addedUserComment = caffPictureService.addUserCommentToCaffPicture(id,
 				userCommentRequestDTO);
-		if(caffPictureWithAddedComment.isPresent()){
+		if(addedUserComment.isPresent()){
+
+			log.info(MessageFormat.format("[{0}]::[{1}]: Saved Comment({2}) for CaffPicture({3})!", LocalDateTime.now().toString(),
+					authenticationFacade.getCurrentUserFromContext().get().username(), addedUserComment.get().getId(), id));
+
 			return ResponseEntity.ok().build();
 		}
 		else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+
+	@PostMapping("/{id}/buy")
+	public ResponseEntity<Void> buyOneCaffPicture(@PathVariable UUID id){
+		try {
+			caffPictureService.buyOneCaffPicture(id);
+		}
+		catch (Exception ignored){
+			return ResponseEntity.badRequest().build();
+		}
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Bought CaffPicture({2})", LocalDateTime.now().toString(),
+				authenticationFacade.getCurrentUserFromContext().get().username(), id));
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{id}")
+	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
+	public ResponseEntity<Void> deleteOneCaffPictureById(@PathVariable UUID id){
+		try {
+			caffPictureService.deleteOneCaffPictureById(id);
+		}
+		catch (Exception ignored){
+			return ResponseEntity.badRequest().build();
+		}
+
+		log.info(MessageFormat.format("[{0}]::[{1}]: Deleted CaffPicture({2})!", LocalDateTime.now().toString(), authenticationFacade.getCurrentUserFromContext().get().username(), id));
+
+		return ResponseEntity.noContent().build();
 	}
 }

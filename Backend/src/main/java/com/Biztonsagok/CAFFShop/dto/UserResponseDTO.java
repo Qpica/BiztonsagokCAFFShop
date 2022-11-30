@@ -1,48 +1,29 @@
 package com.Biztonsagok.CAFFShop.dto;
 
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
+import com.Biztonsagok.CAFFShop.models.User;
 import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.Biztonsagok.CAFFShop.models.UserRole;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-public class UserResponseDTO {
+@Getter
+@Setter
+@NoArgsConstructor
+public class UserResponseDTO extends RepresentationModel<UserResponseDTO> {
 	private String userName;
 	private Set<UserRole> roles = new HashSet<>();
-	private List<CaffPicture> caffs;
-	private List<UserComment> comments;
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public Set<UserRole> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<UserRole> roles) {
-		this.roles = roles;
-	}
-
-	public List<CaffPicture> getCaffs() {
-		return caffs;
-	}
-
-	public void setCaffs(List<CaffPicture> caffs) {
-		this.caffs = caffs;
-	}
-
-	public List<UserComment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<UserComment> comments) {
-		this.comments = comments;
+	public UserResponseDTO(Optional<User> user) {
+		this.userName = user.get().getUsername();
+		this.roles = user.get().getRoles();
 	}
 }

@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String LOGIN_URL = "/api/auth/login";
 	private static final String TOKEN_REFRESH_URL = "/api/auth/refresh";
-	private static final String REGISTER_URL = "/api/auth/register";
+	private static final String REGISTER_URL = "/api/users/register";
 	private final JwtTokenAuthenticationService jwtTokenAuthenticationService;
 
 	@Bean
