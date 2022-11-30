@@ -45,6 +45,7 @@ import { authActions } from '_store';
 
 const ProfileSection = () => {
     const dispatch = useDispatch();
+    const { user: authUser } = useSelector((x) => x.auth);
 
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
@@ -162,7 +163,7 @@ const ProfileSection = () => {
                                         <Stack>
                                             <Stack direction="row" spacing={0.5} alignItems="center">
                                                 <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                    Johne Doe
+                                                    {authUser.data.aud}
                                                 </Typography>
                                             </Stack>
                                             <Typography variant="subtitle2">Project Admin</Typography>

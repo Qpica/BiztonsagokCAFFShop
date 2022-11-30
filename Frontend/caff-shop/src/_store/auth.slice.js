@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import jwtDecode from 'jwt-decode';
 
 import { fetchWrapper } from '_helpers/fetch-wrapper';
 import { history } from '_helpers/history';
@@ -22,7 +23,9 @@ export const authReducer = slice.reducer;
 function createInitialState() {
     return {
         // initialize state from local storage to enable user to stay logged in
-        user: JSON.parse(localStorage.getItem('user')),
+        //user: JSON.parse(localStorage.getItem('user')),
+        user: localStorage.getItem('user'),
+        user: null,
         error: null
     };
 }
@@ -82,15 +85,17 @@ function createExtraReducers() {
                 state.error = null;
             },
             [fulfilled]: (state, action) => {
-                const user = action.payload;
+                const _user = action.payload;
 
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-                state.user = user;
+                //localStorage.setItem('user', JSON.stringify(_user));
+                localStorage.setItem('user', { _user, data: jwtDecode(_user.accessToken) });
+                state.user = _user;
+                state.user.data = jwtDecode(_user.accessToken);
 
                 // get return url from location state or default to home page
                 const { from } = history.location.state || { from: { pathname: '/' } };
-                history.navigate(from);
+                history.navigate('/');
             },
             [rejected]: (state, action) => {
                 state.error = action.error;
