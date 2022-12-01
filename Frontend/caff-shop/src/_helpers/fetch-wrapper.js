@@ -15,7 +15,7 @@ function request(method) {
         };
         if (body) {
             requestOptions.headers['Content-Type'] = 'application/json';
-            //requestOptions.headers['Access-Control-Allow-Origin'] = '*';
+            requestOptions.headers['Access-Control-Allow-Origin'] = '*';
             requestOptions.headers['Access-Control-Allow-Methods'] = 'POST, PUT, GET, OPTIONS, DELETE';
             requestOptions.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
             requestOptions.body = JSON.stringify(body);
