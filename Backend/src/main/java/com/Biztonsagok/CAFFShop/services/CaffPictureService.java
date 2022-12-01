@@ -134,4 +134,12 @@ public class CaffPictureService {
 		}
 		return picture;
 	}
+
+	public List<CaffPicture> searchByTitle(String title) {
+		return caffPictureRepository.findByTitleContainingIgnoreCase(title);
+	}
+
+	public Optional<byte[]> getCaffPictureData(UUID id) {
+		return caffPictureRepository.findById(id).map(CaffPicture::getCaffPictureData);
+	}
 }
