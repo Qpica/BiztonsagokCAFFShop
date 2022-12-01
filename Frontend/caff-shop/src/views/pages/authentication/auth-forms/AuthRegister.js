@@ -36,7 +36,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { history } from '../../../../_helpers/history';
-import { authActions } from '_store';
+import { authActions, userActions } from '_store';
 
 // ===========================|| REGISTER ||=========================== //
 
@@ -101,7 +101,7 @@ const Register = ({ ...others }) => {
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    dispatch(authActions.register({ username: values.username, password: values.password }));
+                    dispatch(userActions.register({ username: values.username, password: values.password }));
                     /*try {
                         if (scriptedRef.current) {
                             setStatus({ success: true });
