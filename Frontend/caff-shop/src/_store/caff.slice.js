@@ -36,7 +36,8 @@ function createExtraActions() {
     return {
         getAllCaffPicture: getAllCaffPicture(),
         getOneCaffPicture: getOneCaffPicture(),
-        getOneCaffPictureData: getOneCaffPictureData()
+        getOneCaffPictureData: getOneCaffPictureData(),
+        postCaffPicture: postCaffPicture()
     };
 
     function getAllCaffPicture() {
@@ -48,13 +49,17 @@ function createExtraActions() {
     function getOneCaffPictureData() {
         return createAsyncThunk(`${name}/getOneCaffPictureData`, async ({ id }) => await fetchWrapper.get(`${baseUrl}/${id}/data`, { id }));
     }
+    function postCaffPicture() {
+        return createAsyncThunk(`${name}/postCaffPicture`, async (formData) => await fetchWrapper.post(`${baseUrl}`, formData, true));
+    }
 }
 
 function createExtraReducers() {
     return {
         getAllCaffPicture: getAllCaffPicture(),
         getOneCaffPicturer: getOneCaffPicture(),
-        getOneCaffPictureData: getOneCaffPictureData()
+        getOneCaffPictureData: getOneCaffPictureData(),
+        postCaffPicture: postCaffPicture()
     };
 
     function getAllCaffPicture() {
@@ -94,6 +99,18 @@ function createExtraReducers() {
             [fulfilled]: (state, action) => {
                 state.caffPictureData = action.payload;
             },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+            }
+        };
+    }
+    function postCaffPicture() {
+        var { pending, fulfilled, rejected } = extraActions.postCaffPicture;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+            },
+            [fulfilled]: (state, action) => {},
             [rejected]: (state, action) => {
                 state.error = action.error;
             }

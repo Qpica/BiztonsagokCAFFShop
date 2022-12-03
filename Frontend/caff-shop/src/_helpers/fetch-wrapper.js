@@ -8,18 +8,28 @@ export const fetchWrapper = {
 };
 
 function request(method) {
-    return (url, body) => {
+    return (url, body, isMedia) => {
         const requestOptions = {
             method,
             headers: authHeader(url)
         };
         if (body) {
-            requestOptions.headers['Content-Type'] = 'application/json';
-            requestOptions.headers['Access-Control-Allow-Origin'] = '*';
-            requestOptions.headers['Access-Control-Allow-Methods'] = 'POST, PUT, GET, OPTIONS, DELETE';
-            requestOptions.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
-            requestOptions.body = JSON.stringify(body);
+            if (isMedia) {
+                requestOptions.headers['Accept'] = 'application/json';
+                //requestOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                //requestOptions.headers['Access-Control-Allow-Headers'] = 'Authorization';
+                //requestOptions.headers['Content-Type'] = 'multipart/form-data; boundary=WebAppBoundary';
+                //requestOptions.headers['Content-Length'] = body.length;
+                requestOptions.body = body;
+            } else {
+                requestOptions.headers['Access-Control-Allow-Origin'] = '*';
+                requestOptions.headers['Access-Control-Allow-Methods'] = 'POST, PUT, GET, OPTIONS, DELETE';
+                requestOptions.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
+                requestOptions.headers['Content-Type'] = 'application/json';
+                requestOptions.body = JSON.stringify(body);
+            }
         }
+        console.log(body);
         return fetch(url, requestOptions).then(handleResponse);
     };
 }

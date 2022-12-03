@@ -9,6 +9,7 @@ import { element } from 'prop-types';
 // utilities routing
 const UserManagementPath = Loadable(lazy(() => import('views/features/UserManagement')));
 const LibraryPath = Loadable(lazy(() => import('views/features/Library')));
+const ProfilePath = Loadable(lazy(() => import('views/features/Profile')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -31,6 +32,10 @@ const MainRoutes = {
         {
             path: 'library',
             element: <LibraryPath />
+        },
+        {
+            path: 'profile',
+            element: <ProfilePath />
         }
     ]
 };

@@ -1,10 +1,10 @@
-import auth from './auth';
+import profile from './profile';
 import features from './features';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-    items: [auth, features]
+    items: [profile, features]
 };
 
 export default menuItems;

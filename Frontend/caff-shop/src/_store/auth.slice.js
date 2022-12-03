@@ -23,9 +23,7 @@ export const authReducer = slice.reducer;
 function createInitialState() {
     return {
         // initialize state from local storage to enable user to stay logged in
-        //user: JSON.parse(localStorage.getItem('user')),
-        user: localStorage.getItem('user'),
-        user: null,
+        user: JSON.parse(localStorage.getItem('user')),
         error: null
     };
 }
@@ -87,12 +85,10 @@ function createExtraReducers() {
             },
             [fulfilled]: (state, action) => {
                 const _user = action.payload;
-
+                const userData = { tokens: _user, data: jwtDecode(_user.accessToken) };
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
-                //localStorage.setItem('user', JSON.stringify(_user));
-                localStorage.setItem('user', { _user, data: jwtDecode(_user.accessToken) });
+                localStorage.setItem('user', JSON.stringify(_user));
                 state.user = _user;
-                state.user.data = jwtDecode(_user.accessToken);
 
                 // get return url from location state or default to home page
                 const { from } = history.location.state || { from: { pathname: '/' } };
@@ -125,6 +121,7 @@ function createExtraReducers() {
             },
             [fulfilled]: () => {
                 const user = action.payload;
+                const userData = { tokens: _user, data: jwtDecode(_user.accessToken) };
 
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('user', JSON.stringify(user));

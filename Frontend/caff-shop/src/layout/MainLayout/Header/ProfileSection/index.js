@@ -40,6 +40,7 @@ import User1 from 'assets/images/users/user-round.svg';
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
 
 import { authActions } from '_store';
+import jwtDecode from 'jwt-decode';
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -163,10 +164,9 @@ const ProfileSection = () => {
                                         <Stack>
                                             <Stack direction="row" spacing={0.5} alignItems="center">
                                                 <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                    {authUser.data.aud}
+                                                    {jwtDecode(authUser.accessToken).aud}
                                                 </Typography>
                                             </Stack>
-                                            <Typography variant="subtitle2">Project Admin</Typography>
                                         </Stack>
                                     </Box>
                                     <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>

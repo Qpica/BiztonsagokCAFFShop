@@ -1,10 +1,10 @@
 // assets
-import { IconBook2, IconUser } from '@tabler/icons';
+import { IconBook2, IconUsers } from '@tabler/icons';
 
 // constant
 const icons = {
     IconBook2,
-    IconUser
+    IconUsers
 };
 
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
@@ -19,7 +19,7 @@ const utilities = {
             title: 'User management',
             type: 'item',
             url: '/user-management',
-            icon: icons.IconUser,
+            icon: icons.IconUsers,
             breadcrumbs: false
         },
         {

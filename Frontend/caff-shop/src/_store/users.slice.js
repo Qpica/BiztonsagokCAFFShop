@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { register } from 'serviceWorker';
+import { history } from '_helpers/history';
 
 import { fetchWrapper } from '_helpers/fetch-wrapper';
 
@@ -30,7 +30,8 @@ function createExtraActions() {
 
     return {
         getAll: getAll(),
-        register: register()
+        register: register(),
+        deleteUser: deleteUser()
     };
 
     function getAll() {
@@ -42,12 +43,19 @@ function createExtraActions() {
             async ({ username, password }) => await fetchWrapper.post(`${baseUrl}/register`, { username, password })
         );
     }
+    function deleteUser() {
+        return createAsyncThunk(
+            `${name}/deleteUser`,
+            async (username) => await fetchWrapper.delete(`${baseUrl}/${username}`, { username })
+        );
+    }
 }
 
 function createExtraReducers() {
     return {
         ...getAll(),
-        ...register()
+        ...register(),
+        ...deleteUser()
     };
 
     function getAll() {
@@ -57,7 +65,7 @@ function createExtraReducers() {
                 state.users = { loading: true };
             },
             [fulfilled]: (state, action) => {
-                state.users = action.payload;
+                state.users = action.payload._embedded.userResponseDTOList;
             },
             [rejected]: (state, action) => {
                 state.users = { error: action.error };
@@ -65,6 +73,20 @@ function createExtraReducers() {
         };
     }
     function register() {
+        var { pending, fulfilled, rejected } = extraActions.register;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+            },
+            [fulfilled]: () => {
+                history.navigate(`/login`);
+            },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+            }
+        };
+    }
+    function deleteUser() {
         var { pending, fulfilled, rejected } = extraActions.register;
         return {
             [pending]: (state) => {

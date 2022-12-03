@@ -1,9 +1,34 @@
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
-import { Grid, Link, Button, Avatar, Divider, Box } from '@mui/material';
+import {
+    Grid,
+    Link,
+    Button,
+    Avatar,
+    Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Checkbox,
+    Divider,
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
+    Stack,
+    Typography,
+    useMediaQuery
+} from '@mui/material';
 import { List, ListItem, ListItemButton, ListItemText, ListItemAvatar } from '@mui/material';
 import MuiTypography from '@mui/material/Typography';
 import { red, yellow } from '@mui/material/colors';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { Formik } from 'formik';
+import jwtDecode from 'jwt-decode';
 
 import * as React from 'react';
 import SubCard from 'ui-component/cards/SubCard';
@@ -20,9 +45,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CommentIcon from '@mui/icons-material/ChatBubble';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import MyIcon from './MyIcon';
+import AnimateButton from 'ui-component/extended/AnimateButton';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { caffActions, userActions } from '_store';
+import ViewImage from 'ui-component/ViewFile';
 
 const sampleItems = [
     {
@@ -57,157 +85,269 @@ const sampleItems = [
 
 const Library = ({ isLoading }) => {
     const theme = useTheme();
-
+    const [openUploadForm, setOpenUploadForm] = React.useState(false);
     const [items, setItems] = React.useState(sampleItems);
-    const handleEditCommentOpen = ({ item, comment }) => {
-        console.log('Need edit implementation.');
+    const { user: authUser } = useSelector((x) => x.auth);
+    const fileRef = useRef(null);
+    const handleUploadOpen = (id) => {
+        setOpenUploadForm(true);
+        //setSelectedUserId(id);
+        console.log(jwtDecode(authUser.accessToken));
     };
-    const handleDeleteCommentOpen = ({ item, comment }) => {
-        var newItems = items.filter((i) => i.id !== item.id);
-
-        var newComments = item.comments.filter((c) => c.id !== comment.id);
-        item.comments = newComments;
-        newItems.push(item);
-        setItems(newItems);
-    };
-    const onEditItem = (item) => {
-        console.log('Need edit implementation.');
-    };
-    const onDeleteItem = (item) => {
-        var newItems = items.filter((i) => i.id !== item.id);
-        setItems(newItems);
+    const handleUploadClose = () => {
+        setOpenUploadForm(false);
     };
 
     const dispatch = useDispatch();
     const caffPictures = useSelector((x) => x.caff.allCaffPicture);
 
     useEffect(() => {
-        dispatch(caffActions.getAllCaffPicture());
-        dispatch(caffActions.getOneCaffPicture({ id: 1 }));
+        //dispatch(caffActions.getAllCaffPicture());
+        //dispatch(caffActions.getOneCaffPicture({ id: 1 }));
     });
 
+    const UploadForm = () => {
+        return (
+            <Dialog
+                open={openUploadForm}
+                onClose={() => handleUploadClose()}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <Formik
+                        initialValues={{
+                            title: 'Kep',
+                            description: 'leiras',
+                            price: 0,
+                            file: null
+                        }}
+                        onSubmit={async (values, {}) => {
+                            var formdata = new FormData();
+                            formdata.append('title', 'Title2');
+                            formdata.append('description', 'description');
+                            formdata.append('caffFile', values.file);
+                            formdata.append('ownerUserName', 'admin');
+                            formdata.append('price', '1000');
+                            //dispatch(caffActions.postCaffPicture(formdata));
+                            console.log(values.file);
+                            handleUploadClose();
+                        }}
+                    >
+                        {({ values, handleBlur, handleChange, handleSubmit, isSubmitting, setFieldValue, setFieldTouched }) => (
+                            <form noValidate onSubmit={handleSubmit}>
+                                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                    <InputLabel htmlFor="title">Title</InputLabel>
+                                    <OutlinedInput
+                                        id="title"
+                                        type="text"
+                                        name="title"
+                                        value={values.title}
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        label="Title"
+                                        inputProps={{}}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                    <InputLabel htmlFor="description">Description</InputLabel>
+                                    <OutlinedInput
+                                        id="description"
+                                        type="text"
+                                        name="description"
+                                        value={values.description}
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        label="Description"
+                                        inputProps={{}}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                    <InputLabel htmlFor="price">Price</InputLabel>
+                                    <OutlinedInput
+                                        id="price"
+                                        type="int"
+                                        name="price"
+                                        value={values.price}
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        label="Price"
+                                        inputProps={{}}
+                                    />
+                                </FormControl>
+                                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                    <OutlinedInput
+                                        ref={fileRef}
+                                        id="file"
+                                        type="file"
+                                        name="file"
+                                        onBlur={handleBlur}
+                                        //onChange={handleChange}
+                                        onChange={(event) => {
+                                            //const fileData = event.currentTarget.files[0];
+                                            setFieldValue('file', event.target.files[0]);
+                                            //setFieldValue('file', { data: fileData, fileName: '_caff' });
+                                            //setTimeout(() => setFieldTouched(file, true));
+                                            //console.log(fileData, 'ss');
+                                        }}
+                                        label="File"
+                                        inputProps={{}}
+                                    />
+                                </FormControl>
+                                <Box sx={{ mt: 2 }}>
+                                    <AnimateButton>
+                                        <Button
+                                            disableElevation
+                                            disabled={isSubmitting}
+                                            fullWidth
+                                            size="large"
+                                            type="submit"
+                                            variant="contained"
+                                            color="secondary"
+                                        >
+                                            Save
+                                        </Button>
+                                    </AnimateButton>
+                                </Box>
+                            </form>
+                        )}
+                    </Formik>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => handleUploadClose()}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+        );
+    };
+
     return (
-        <MainCard title="Library">
-            <Grid item sy={{ m: 1.0 }}>
-                <Grid container direction="column" columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid container direction="row" onClick={() => handleToggle()}>
-                        <Grid item>
-                            <SearchSection />
-                        </Grid>
-                        <Grid item>
-                            <Button sx={{ borderRadius: 10, width: 100, height: 40, m: 0.5 }} variant="contained">
-                                Search
-                            </Button>
-                        </Grid>
-                        <Grid item sx={{ width: 100 }} />
-                        <Grid item>
-                            <Button
-                                sx={{ borderRadius: 10, width: 120, height: 40, m: 0.5 }}
-                                variant="contained"
-                                startIcon={<UploadIcon />}
-                            >
-                                Upload
-                            </Button>
+        <>
+            <UploadForm />
+            <MainCard title="Library">
+                <Grid item sy={{ m: 1.0 }}>
+                    <Grid container direction="column" columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid container direction="row">
+                            <Grid item>
+                                <SearchSection />
+                            </Grid>
+                            <Grid item>
+                                <Button sx={{ borderRadius: 10, width: 100, height: 40, m: 0.5 }} variant="contained">
+                                    Search
+                                </Button>
+                            </Grid>
+                            <Grid item sx={{ width: 100 }} />
+                            <Grid item>
+                                <Button
+                                    sx={{ borderRadius: 10, width: 120, height: 40, m: 0.5 }}
+                                    variant="contained"
+                                    startIcon={<UploadIcon />}
+                                    onClick={() => handleUploadOpen()}
+                                >
+                                    Upload
+                                </Button>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-                <Grid item sy={{ m: 1.0 }}>
-                    <Grid container direction="column">
-                        <Grid item sy={{ p: 5.0 }}>
-                            <Grid container spacing={gridSpacing}>
-                                <Grid item xs={12} sm={12}>
-                                    {items.map((item) => {
-                                        return (
-                                            <div key={item.id}>
-                                                <SubCard title={item.title}>
-                                                    <Grid container direction="column" spacing={1}>
-                                                        <Grid item>
-                                                            <Grid container direction="row" spacing={1}>
-                                                                <Grid item xs={12} sm={6}>
-                                                                    <MuiTypography variant="h5" gutterBottom>
-                                                                        filename: {item.fileName}
-                                                                    </MuiTypography>
-                                                                </Grid>
-                                                                <Grid item xs={12} sm={6}>
-                                                                    <Grid container direction="row" spacing={1}>
-                                                                        <Grid item>
-                                                                            <Button
-                                                                                sx={{ borderRadius: 10, width: 100, height: 40 }}
-                                                                                variant="contained"
-                                                                                onClick={() => onEditItem(item)}
-                                                                                startIcon={<EditIcon />}
-                                                                            >
-                                                                                Edit
-                                                                            </Button>
-                                                                        </Grid>
-                                                                        <Grid item>
-                                                                            <Button
-                                                                                sx={{ borderRadius: 10, width: 100, height: 40 }}
-                                                                                variant="contained"
-                                                                                onClick={() => onDeleteItem(item)}
-                                                                                startIcon={<DeleteIcon />}
-                                                                            >
-                                                                                Delete
-                                                                            </Button>
+                    <Grid item sy={{ m: 1.0 }}>
+                        <Grid container direction="column">
+                            <Grid item sy={{ p: 5.0 }}>
+                                <Grid container spacing={gridSpacing}>
+                                    <Grid item xs={12} sm={12}>
+                                        {items.map((item) => {
+                                            return (
+                                                <div key={item.id}>
+                                                    <SubCard title={item.title}>
+                                                        <Grid container direction="column" spacing={1}>
+                                                            <Grid item>
+                                                                <Grid container direction="row" spacing={1}>
+                                                                    <Grid item xs={12} sm={6}>
+                                                                        <MuiTypography variant="h5" gutterBottom>
+                                                                            filename: {item.fileName}
+                                                                        </MuiTypography>
+                                                                    </Grid>
+                                                                    <Grid item xs={12} sm={6}>
+                                                                        <Grid container direction="row" spacing={1}>
+                                                                            <Grid item>
+                                                                                <Button
+                                                                                    sx={{ borderRadius: 10, width: 100, height: 40 }}
+                                                                                    variant="contained"
+                                                                                    onClick={() => onEditItem(item)}
+                                                                                    startIcon={<EditIcon />}
+                                                                                >
+                                                                                    Edit
+                                                                                </Button>
+                                                                            </Grid>
+                                                                            <Grid item>
+                                                                                <Button
+                                                                                    sx={{ borderRadius: 10, width: 100, height: 40 }}
+                                                                                    variant="contained"
+                                                                                    onClick={() => onDeleteItem(item)}
+                                                                                    startIcon={<DeleteIcon />}
+                                                                                >
+                                                                                    Delete
+                                                                                </Button>
+                                                                            </Grid>
                                                                         </Grid>
                                                                     </Grid>
                                                                 </Grid>
                                                             </Grid>
-                                                        </Grid>
-                                                        <Grid item>
-                                                            <MuiTypography variant="caption" gutterBottom>
-                                                                Comments
-                                                            </MuiTypography>
-                                                        </Grid>
-                                                        <Grid item>
-                                                            <List sx={{ maxWidth: 450 }}>
-                                                                {item.comments.map((comment) => {
-                                                                    return (
-                                                                        <div key={comment.id}>
-                                                                            <ListItem>
-                                                                                <ListItemAvatar>
-                                                                                    <MyIcon
-                                                                                        color={yellow[400]}
-                                                                                        icon={<CommentIcon fontSize="sm" />}
-                                                                                    />
-                                                                                </ListItemAvatar>
-                                                                                <ListItemButton sx={{ maxWidth: 550 }}>
-                                                                                    {comment.message}
-                                                                                </ListItemButton>
-                                                                                <Box sx={{ width: 10 }} />
+                                                            <Grid item>
+                                                                <MuiTypography variant="caption" gutterBottom>
+                                                                    Comments
+                                                                </MuiTypography>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <List sx={{ maxWidth: 450 }}>
+                                                                    {item.comments.map((comment) => {
+                                                                        return (
+                                                                            <div key={comment.id}>
+                                                                                <ListItem>
+                                                                                    <ListItemAvatar>
+                                                                                        <MyIcon
+                                                                                            color={yellow[400]}
+                                                                                            icon={<CommentIcon fontSize="sm" />}
+                                                                                        />
+                                                                                    </ListItemAvatar>
+                                                                                    <ListItemButton sx={{ maxWidth: 550 }}>
+                                                                                        {comment.message}
+                                                                                    </ListItemButton>
+                                                                                    <Box sx={{ width: 10 }} />
 
-                                                                                <ListItemAvatar
-                                                                                    onClick={() => handleEditCommentOpen({ item, comment })}
-                                                                                    sx={{ m: 0.25 }}
-                                                                                >
-                                                                                    <Link>Rename</Link>
-                                                                                </ListItemAvatar>
-                                                                                <ListItemAvatar
-                                                                                    onClick={() =>
-                                                                                        handleDeleteCommentOpen({ item, comment })
-                                                                                    }
-                                                                                    sx={{ m: 0.25 }}
-                                                                                >
-                                                                                    <Link color={red[400]}>Delete</Link>
-                                                                                </ListItemAvatar>
-                                                                            </ListItem>
-                                                                        </div>
-                                                                    );
-                                                                })}
-                                                            </List>
+                                                                                    <ListItemAvatar
+                                                                                        onClick={() =>
+                                                                                            handleEditCommentOpen({ item, comment })
+                                                                                        }
+                                                                                        sx={{ m: 0.25 }}
+                                                                                    >
+                                                                                        <Link>Rename</Link>
+                                                                                    </ListItemAvatar>
+                                                                                    <ListItemAvatar
+                                                                                        onClick={() =>
+                                                                                            handleDeleteCommentOpen({ item, comment })
+                                                                                        }
+                                                                                        sx={{ m: 0.25 }}
+                                                                                    >
+                                                                                        <Link color={red[400]}>Delete</Link>
+                                                                                    </ListItemAvatar>
+                                                                                </ListItem>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </List>
+                                                            </Grid>
                                                         </Grid>
-                                                    </Grid>
-                                                </SubCard>
-                                            </div>
-                                        );
-                                    })}
+                                                    </SubCard>
+                                                </div>
+                                            );
+                                        })}
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-        </MainCard>
+            </MainCard>
+        </>
     );
 };
 
