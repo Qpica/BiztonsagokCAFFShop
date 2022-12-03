@@ -10,17 +10,19 @@ import com.Biztonsagok.CAFFShop.repositories.PurchaseElementRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserCommentRepository;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
 import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
+import com.narcano.jni.CAFF;
+import com.narcano.jni.CaffParser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -36,6 +38,8 @@ public class CaffPictureService {
 	private PurchaseElementRepository purchaseElementRepository;
 	@Autowired
 	private final AuthenticationFacade authenticationFacade;
+	@Autowired
+	private final CaffParser caffParser;
 
 	public Optional<CaffPicture> storeFile(CaffPicture caffPicture/*, MultipartFile caffPictureFile*/) throws IOException {
 		//String fileName = StringUtils.cleanPath(Objects.requireNonNull(caffPictureFile.getOriginalFilename()));
@@ -43,7 +47,7 @@ public class CaffPictureService {
 		return Optional.of(caffPictureRepository.save(caffPicture));
 	}
 
-	public Optional<CaffPicture> getCaffPicture(UUID id){
+	public Optional<CaffPicture> getCaffPicture(UUID id) {
 		return caffPictureRepository.findById(id);
 	}
 
@@ -62,11 +66,19 @@ public class CaffPictureService {
 		return result;
 	}
 
-	public CaffPictureResponseDTO caffPictureResponseDTOFromCaffPicture(CaffPicture caffPicture){
+	private CAFF parseCaff(String fileName) {
+		final var caff = Optional.ofNullable(caffParser.parse(fileName))
+				.orElseThrow(IllegalStateException::new); // todo: error handling
+		final var preview = caff.getPreview(); // just to show usage, delete this line, and inline the result
+
+		return caff;
+	}
+
+	public CaffPictureResponseDTO caffPictureResponseDTOFromCaffPicture(CaffPicture caffPicture) {
 		CaffPictureResponseDTO result = new CaffPictureResponseDTO(caffPicture);
 
 		UserResponseDTO owner = new UserResponseDTO(userRepository.findByUsername(authenticationFacade.getCurrentUserFromContext().get().username()));
-		if(caffPicture.getUserCommentList() != null) {
+		if (caffPicture.getUserCommentList() != null) {
 			List<UserCommentResponseDTO> ownerComments = caffPicture.getUserCommentList().stream().map(
 					userComment -> {
 						return new UserCommentResponseDTO(userComment.getComment_value(), userComment.getOwner().getUsername());

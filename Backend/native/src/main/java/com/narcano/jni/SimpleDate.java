@@ -1,4 +1,4 @@
-package com.Biztonsagok.CAFFShop.narcano.jni;
+package com.narcano.jni;
 
 import java.util.Objects;
 

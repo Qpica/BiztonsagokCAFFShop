@@ -14,6 +14,6 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'CAFFShop'
+rootProject.name = "native"
+include('native')
 
-include 'native'
