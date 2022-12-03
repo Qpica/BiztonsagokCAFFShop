@@ -331,9 +331,9 @@ const Library = ({ isLoading }) => {
                                                                 </Grid>
                                                                 <Grid item>
                                                                     <List sx={{ maxWidth: 450 }}>
-                                                                        {item.userCommentList.map((comment) => {
+                                                                        {item.userCommentList.map((comment, index) => {
                                                                             return (
-                                                                                <div key={comment.id}>
+                                                                                <div key={index}>
                                                                                     <ListItem>
                                                                                         <ListItemAvatar>
                                                                                             <MyIcon
@@ -342,32 +342,65 @@ const Library = ({ isLoading }) => {
                                                                                             />
                                                                                         </ListItemAvatar>
                                                                                         <ListItemButton sx={{ maxWidth: 550 }}>
-                                                                                            {comment.message}
+                                                                                            {comment.ownerName}: {comment.comment_value}
                                                                                         </ListItemButton>
-                                                                                        <Box sx={{ width: 10 }} />
-
-                                                                                        <ListItemAvatar
-                                                                                            onClick={() =>
-                                                                                                handleEditCommentOpen({ item, comment })
-                                                                                            }
-                                                                                            sx={{ m: 0.25 }}
-                                                                                        >
-                                                                                            <Link>Rename</Link>
-                                                                                        </ListItemAvatar>
-                                                                                        <ListItemAvatar
-                                                                                            onClick={() =>
-                                                                                                handleDeleteCommentOpen({ item, comment })
-                                                                                            }
-                                                                                            sx={{ m: 0.25 }}
-                                                                                        >
-                                                                                            <Link color={red[400]}>Delete</Link>
-                                                                                        </ListItemAvatar>
                                                                                     </ListItem>
                                                                                 </div>
                                                                             );
                                                                         })}
                                                                     </List>
                                                                 </Grid>
+                                                                <Formik
+                                                                    initialValues={{
+                                                                        comment: ''
+                                                                    }}
+                                                                    onSubmit={async (values, {}) => {
+                                                                        const linkArray = item._links.self.href.split('/');
+                                                                        dispatch(
+                                                                            caffActions.addComment({
+                                                                                id: linkArray[5],
+                                                                                comment_value: values.comment
+                                                                            })
+                                                                        );
+                                                                        values.comment = '';
+                                                                    }}
+                                                                >
+                                                                    {({ values, handleSubmit, isSubmitting, handleBlur, handleChange }) => (
+                                                                        <>
+                                                                            <form noValidate onSubmit={handleSubmit}>
+                                                                                <FormControl sx={{ ...theme.typography.customInput }}>
+                                                                                    <InputLabel htmlFor="comment">
+                                                                                        Write something...
+                                                                                    </InputLabel>
+                                                                                    <OutlinedInput
+                                                                                        id="comment"
+                                                                                        type="text"
+                                                                                        name="comment"
+                                                                                        value={values.comment}
+                                                                                        onBlur={handleBlur}
+                                                                                        onChange={handleChange}
+                                                                                        label="Comment"
+                                                                                        inputProps={{}}
+                                                                                    />
+                                                                                </FormControl>
+                                                                                <Box sx={{ mt: 2 }}>
+                                                                                    <AnimateButton>
+                                                                                        <Button
+                                                                                            disableElevation
+                                                                                            disabled={isSubmitting}
+                                                                                            size="large"
+                                                                                            type="submit"
+                                                                                            variant="contained"
+                                                                                            color="secondary"
+                                                                                        >
+                                                                                            Add Comment
+                                                                                        </Button>
+                                                                                    </AnimateButton>
+                                                                                </Box>
+                                                                            </form>
+                                                                        </>
+                                                                    )}
+                                                                </Formik>
                                                             </Grid>
                                                         </SubCard>
                                                     </div>

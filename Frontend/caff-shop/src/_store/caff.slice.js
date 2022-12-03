@@ -1,3 +1,4 @@
+import AddComment from '@mui/icons-material/AddComment';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { fetchWrapper } from '_helpers/fetch-wrapper';
@@ -40,7 +41,8 @@ function createExtraActions() {
         getOneCaffPictureData: getOneCaffPictureData(),
         postCaffPicture: postCaffPicture(),
         editCaffPicture: editCaffPicture(),
-        deleteCaffPicture: deleteCaffPicture()
+        deleteCaffPicture: deleteCaffPicture(),
+        addComment: addComment()
     };
 
     function getAllCaffPicture() {
@@ -64,6 +66,12 @@ function createExtraActions() {
     function deleteCaffPicture() {
         return createAsyncThunk(`${name}/deleteCaffPicture`, async (id) => await fetchWrapper.delete(`${baseUrl}/${id}`));
     }
+    function addComment() {
+        return createAsyncThunk(
+            `${name}/addComment`,
+            async ({ id, comment_value }) => await fetchWrapper.post(`${baseUrl}/${id}/comments`, { id, comment_value })
+        );
+    }
 }
 
 function createExtraReducers() {
@@ -73,7 +81,8 @@ function createExtraReducers() {
         ...getOneCaffPictureData(),
         ...postCaffPicture(),
         ...editCaffPicture(),
-        ...deleteCaffPicture()
+        ...deleteCaffPicture(),
+        ...addComment()
     };
 
     function getAllCaffPicture() {
@@ -156,6 +165,22 @@ function createExtraReducers() {
     }
     function deleteCaffPicture() {
         var { pending, fulfilled, rejected } = extraActions.deleteCaffPicture;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+                state.pending = true;
+            },
+            [fulfilled]: (state, action) => {
+                state.pending = false;
+            },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+                state.pending = false;
+            }
+        };
+    }
+    function addComment() {
+        var { pending, fulfilled, rejected } = extraActions.addComment;
         return {
             [pending]: (state) => {
                 state.error = null;
