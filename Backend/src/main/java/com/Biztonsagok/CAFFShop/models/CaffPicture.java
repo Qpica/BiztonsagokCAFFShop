@@ -50,7 +50,7 @@ public class CaffPicture {
 	private User owner;
 
 	private int price = 0;
-
+	private String path;
 	public CaffPicture(String title, String description, byte[] caffPictureData, List<UserComment> userCommentList, User owner) {
 		this.title = title;
 		this.description = description;

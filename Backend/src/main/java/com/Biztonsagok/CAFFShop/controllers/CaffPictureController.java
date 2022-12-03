@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.File;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -131,9 +133,17 @@ public class CaffPictureController {
 
 		Optional<CaffPicture> storedCaffPicture;
 		try {
+
+			String root  = System.getProperty("user.dir");
+			String path = root + "/Backend/CaffFileDirectory/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
+			//String path = "/src/main/resources/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
+			File dest = new File(path);
+
 			storedCaffPicture = caffPictureService.storeFile(
-					caffPictureService.caffPictureFromCaffPictureRequestDTO(caffPictureRequestDTO)
+					caffPictureService.caffPictureFromCaffPictureRequestDTO(caffPictureRequestDTO, path)
 			);
+
+			caffPictureRequestDTO.getCaffFile().transferTo(dest);
 
 			log.info(MessageFormat.format("[{0}]::[{1}]: Saved CaffPicture({2})!", LocalDateTime.now().toString(),
 					authenticationFacade.getCurrentUserFromContext().get().username(), storedCaffPicture.get().getId()));

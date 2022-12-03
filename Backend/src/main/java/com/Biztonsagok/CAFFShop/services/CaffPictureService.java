@@ -55,7 +55,7 @@ public class CaffPictureService {
 		return caffPictureRepository.findAll();
 	}
 
-	public CaffPicture caffPictureFromCaffPictureRequestDTO(CaffPictureRequestDTO caffPictureRequestDTO)
+	public CaffPicture caffPictureFromCaffPictureRequestDTO(CaffPictureRequestDTO caffPictureRequestDTO, String path)
 			throws IOException {
 		CaffPicture result = new CaffPicture();
 		result.setTitle(caffPictureRequestDTO.getTitle());
@@ -63,6 +63,7 @@ public class CaffPictureService {
 		result.setCaffPictureData(caffPictureRequestDTO.getCaffFile().getBytes());
 		result.setPrice(caffPictureRequestDTO.getPrice());
 		userRepository.findByUsername(caffPictureRequestDTO.getOwnerUserName()).ifPresent(result::setOwner);
+		result.setPath(path);
 		return result;
 	}
 
@@ -87,6 +88,7 @@ public class CaffPictureService {
 			result.setUserCommentList(ownerComments);
 		}
 		result.setOwner(owner);
+		result.setCaffData(parseCaff(caffPicture.getPath()));
 		return result;
 	}
 
