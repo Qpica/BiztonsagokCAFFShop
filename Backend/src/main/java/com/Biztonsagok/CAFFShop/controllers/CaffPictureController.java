@@ -163,8 +163,8 @@ public class CaffPictureController {
 	@PutMapping("/{id}")
 	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<CaffPictureResponseDTO> updateOneCaffPicture(@PathVariable UUID id,
-																	   CaffPictureRequestDTO caffPictureRequestDTO){
-		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureRequestDTO);
+																	   CaffPictureUpdateRequestDTO caffPictureUpdateRequestDTO){
+		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureUpdateRequestDTO);
 		if(caffPicture.isPresent()){
 			CaffPictureResponseDTO caffPictureResponseDTO = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture.get());
 

@@ -136,11 +136,11 @@ public class CaffPictureService {
 		caffPictureRepository.deleteById(id);
 	}
 
-	public Optional<CaffPicture> updateOne(UUID id, CaffPictureRequestDTO caffPictureRequestDTO) {
+	public Optional<CaffPicture> updateOne(UUID id, CaffPictureUpdateRequestDTO caffPictureUpdateRequestDTO) {
 		Optional<CaffPicture> picture = caffPictureRepository.findById(id);
 		if(picture.isPresent()){
 			int oldPrice = picture.get().getPrice();
-			picture.get().setPrice(caffPictureRequestDTO.getPrice());
+			picture.get().setPrice(caffPictureUpdateRequestDTO.getPrice());
 			caffPictureRepository.save(picture.get());
 
 			log.info(MessageFormat.format("[{0}]::[{1}]: Updated CaffPicture({2}) property PRICE[{3} -> {4}]!", LocalDateTime.now().toString(),
