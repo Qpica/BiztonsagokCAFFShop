@@ -21,7 +21,8 @@ export const usersReducer = slice.reducer;
 function createInitialState() {
     return {
         users: {},
-        error: null
+        error: null,
+        act_user: null
     };
 }
 
@@ -31,7 +32,8 @@ function createExtraActions() {
     return {
         getAll: getAll(),
         register: register(),
-        deleteUser: deleteUser()
+        deleteUser: deleteUser(),
+        editUser: editUser()
     };
 
     function getAll() {
@@ -49,13 +51,17 @@ function createExtraActions() {
             async (username) => await fetchWrapper.delete(`${baseUrl}/${username}`, { username })
         );
     }
+    function editUser() {
+        return createAsyncThunk(`${name}/editUser`, async (username) => await fetchWrapper.put(`${baseUrl}/${username}`, { username }));
+    }
 }
 
 function createExtraReducers() {
     return {
         ...getAll(),
         ...register(),
-        ...deleteUser()
+        ...deleteUser(),
+        ...editUser()
     };
 
     function getAll() {
@@ -87,7 +93,19 @@ function createExtraReducers() {
         };
     }
     function deleteUser() {
-        var { pending, fulfilled, rejected } = extraActions.register;
+        var { pending, fulfilled, rejected } = extraActions.deleteUser;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+            },
+            [fulfilled]: () => {},
+            [rejected]: (state, action) => {
+                state.error = action.error;
+            }
+        };
+    }
+    function editUser() {
+        var { pending, fulfilled, rejected } = extraActions.editUser;
         return {
             [pending]: (state) => {
                 state.error = null;

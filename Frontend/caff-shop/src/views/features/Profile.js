@@ -1,7 +1,7 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import MainCard from 'ui-component/cards/MainCard';
-import { Button, Box, FormControl, InputLabel, OutlinedInput } from '@mui/material';
+import { Button, Box, FormControl, InputLabel, OutlinedInput, TextField, Grid } from '@mui/material';
 import { Formik } from 'formik';
 import * as React from 'react';
 import AnimateButton from 'ui-component/extended/AnimateButton';
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { userActions } from '_store';
 import jwtDecode from 'jwt-decode';
+import { gridSpacing } from 'store/constant';
 
 const Profile = ({ isLoading }) => {
     const theme = useTheme();
@@ -19,46 +20,26 @@ const Profile = ({ isLoading }) => {
     return (
         <>
             <MainCard title="Profile">
-                <Formik
-                    initialValues={{
-                        username: jwtDecode(authUser.accessToken).aud
-                    }}
-                    onSubmit={async (values, {}) => {
-                        //dispatch(caffActions.postCaffPicture(formdata));
-                    }}
-                >
-                    {({ values, handleBlur, handleChange, handleSubmit, isSubmitting }) => (
-                        <form noValidate onSubmit={handleSubmit}>
-                            <FormControl sx={{ ...theme.typography.customInput }}>
-                                <InputLabel htmlFor="username">Username</InputLabel>
-                                <OutlinedInput
-                                    id="username"
-                                    type="text"
-                                    name="username"
-                                    value={values.username}
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    label="Username"
-                                    inputProps={{}}
-                                />
-                            </FormControl>
-                            <Box sx={{ mt: 2 }}>
-                                <AnimateButton>
-                                    <Button
-                                        disableElevation
-                                        disabled={isSubmitting}
-                                        size="large"
-                                        type="submit"
-                                        variant="contained"
-                                        color="secondary"
-                                    >
-                                        Save
-                                    </Button>
-                                </AnimateButton>
-                            </Box>
-                        </form>
-                    )}
-                </Formik>
+                <Grid item sy={{ m: 1.0 }}>
+                    <Grid container direction="column">
+                        <Grid item sy={{ p: 5.0 }}>
+                            <Grid container spacing={gridSpacing}>
+                                <Grid item xs={12} sm={12}>
+                                    <TextField
+                                        disabled
+                                        id="standard-disabled"
+                                        label="Username"
+                                        defaultValue={jwtDecode(authUser.accessToken).aud}
+                                        variant="standard"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12}>
+                                    <TextField disabled id="standard-disabled" label="Role" defaultValue="Hello World" variant="standard" />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </MainCard>
         </>
     );

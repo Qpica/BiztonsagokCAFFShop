@@ -24,7 +24,8 @@ function createInitialState() {
         allCaffPicture: null,
         caffPicture: null,
         caffPictureData: null,
-        error: null
+        error: null,
+        pending: false
     };
 }
 
@@ -37,7 +38,9 @@ function createExtraActions() {
         getAllCaffPicture: getAllCaffPicture(),
         getOneCaffPicture: getOneCaffPicture(),
         getOneCaffPictureData: getOneCaffPictureData(),
-        postCaffPicture: postCaffPicture()
+        postCaffPicture: postCaffPicture(),
+        editCaffPicture: editCaffPicture(),
+        deleteCaffPicture: deleteCaffPicture()
     };
 
     function getAllCaffPicture() {
@@ -52,14 +55,25 @@ function createExtraActions() {
     function postCaffPicture() {
         return createAsyncThunk(`${name}/postCaffPicture`, async (formData) => await fetchWrapper.post(`${baseUrl}`, formData, true));
     }
+    function editCaffPicture() {
+        return createAsyncThunk(
+            `${name}/editCaffPicture`,
+            async ({ id, formData }) => await fetchWrapper.put(`${baseUrl}/${id}`, formData, true)
+        );
+    }
+    function deleteCaffPicture() {
+        return createAsyncThunk(`${name}/deleteCaffPicture`, async (id) => await fetchWrapper.delete(`${baseUrl}/${id}`));
+    }
 }
 
 function createExtraReducers() {
     return {
-        getAllCaffPicture: getAllCaffPicture(),
-        getOneCaffPicturer: getOneCaffPicture(),
-        getOneCaffPictureData: getOneCaffPictureData(),
-        postCaffPicture: postCaffPicture()
+        ...getAllCaffPicture(),
+        ...getOneCaffPicture(),
+        ...getOneCaffPictureData(),
+        ...postCaffPicture(),
+        ...editCaffPicture(),
+        ...deleteCaffPicture()
     };
 
     function getAllCaffPicture() {
@@ -69,7 +83,11 @@ function createExtraReducers() {
                 state.error = null;
             },
             [fulfilled]: (state, action) => {
-                state.allCaffPicture = action.payload;
+                if (action.payload._embedded) {
+                    state.allCaffPicture = action.payload._embedded.caffPictureResponseDTOList;
+                } else {
+                    state.allCaffPicture = null;
+                }
             },
             [rejected]: (state, action) => {
                 state.error = action.error;
@@ -109,10 +127,46 @@ function createExtraReducers() {
         return {
             [pending]: (state) => {
                 state.error = null;
+                state.pending = true;
             },
-            [fulfilled]: (state, action) => {},
+            [fulfilled]: (state, action) => {
+                state.pending = false;
+            },
             [rejected]: (state, action) => {
                 state.error = action.error;
+                state.pending = false;
+            }
+        };
+    }
+    function editCaffPicture() {
+        var { pending, fulfilled, rejected } = extraActions.editCaffPicture;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+                state.pending = true;
+            },
+            [fulfilled]: (state, action) => {
+                state.pending = false;
+            },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+                state.pending = false;
+            }
+        };
+    }
+    function deleteCaffPicture() {
+        var { pending, fulfilled, rejected } = extraActions.deleteCaffPicture;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+                state.pending = true;
+            },
+            [fulfilled]: (state, action) => {
+                state.pending = false;
+            },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+                state.pending = false;
             }
         };
     }

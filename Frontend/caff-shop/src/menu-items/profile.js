@@ -10,7 +10,7 @@ const profile = {
     children: [
         {
             id: 'profile',
-            title: 'Edit Profile',
+            title: 'My Profile',
             type: 'item',
             url: '/profile',
             icon: IconUser,
