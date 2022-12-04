@@ -23,6 +23,7 @@ export const caffReducer = slice.reducer;
 function createInitialState() {
     return {
         allCaffPicture: null,
+        searchPictures: null,
         caffPicture: null,
         caffPictureData: null,
         error: null,
@@ -42,7 +43,8 @@ function createExtraActions() {
         postCaffPicture: postCaffPicture(),
         editCaffPicture: editCaffPicture(),
         deleteCaffPicture: deleteCaffPicture(),
-        addComment: addComment()
+        addComment: addComment(),
+        search: search()
     };
 
     function getAllCaffPicture() {
@@ -61,7 +63,10 @@ function createExtraActions() {
         return createAsyncThunk(`${name}/postCaffPicture`, async (formData) => await fetchWrapper.post(`${baseUrl}`, formData, true));
     }
     function editCaffPicture() {
-        return createAsyncThunk(`${name}/editCaffPicture`, async ({ id, data }) => await fetchWrapper.put(`${baseUrl}/${id}`, data));
+        return createAsyncThunk(
+            `${name}/editCaffPicture`,
+            async ({ id, formData }) => await fetchWrapper.put(`${baseUrl}/${id}`, formData, true)
+        );
     }
     function deleteCaffPicture() {
         return createAsyncThunk(`${name}/deleteCaffPicture`, async (id) => await fetchWrapper.delete(`${baseUrl}/${id}`));
@@ -71,6 +76,9 @@ function createExtraActions() {
             `${name}/addComment`,
             async ({ id, comment_value }) => await fetchWrapper.post(`${baseUrl}/${id}/comments`, { comment_value })
         );
+    }
+    function search() {
+        return createAsyncThunk(`${name}/search`, async (title) => await fetchWrapper.post(`${baseUrl}/search`, { title }));
     }
 }
 
@@ -82,7 +90,8 @@ function createExtraReducers() {
         ...postCaffPicture(),
         ...editCaffPicture(),
         ...deleteCaffPicture(),
-        ...addComment()
+        ...addComment(),
+        ...search()
     };
 
     function getAllCaffPicture() {
@@ -204,6 +213,23 @@ function createExtraReducers() {
                 state.pending = true;
             },
             [fulfilled]: (state, action) => {
+                state.pending = false;
+            },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+                state.pending = false;
+            }
+        };
+    }
+    function search() {
+        var { pending, fulfilled, rejected } = extraActions.search;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+                state.pending = true;
+            },
+            [fulfilled]: (state, action) => {
+                state.searchPictures = action.payload;
                 state.pending = false;
             },
             [rejected]: (state, action) => {

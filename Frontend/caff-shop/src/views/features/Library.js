@@ -93,7 +93,7 @@ const Library = ({ isLoading }) => {
     const [commentsEnabled, setCommentsEnabled] = React.useState(false);
     const [items, setItems] = React.useState(sampleItems);
     const { user: authUser } = useSelector((x) => x.auth);
-    const { allCaffPicture: caffPics, pending: postCaffPending } = useSelector((x) => x.caff);
+    const { allCaffPicture: caffPics, pending: postCaffPending, caffPicture: caffPic } = useSelector((x) => x.caff);
     const { users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
 
     const fileRef = useRef(null);
@@ -101,6 +101,8 @@ const Library = ({ isLoading }) => {
     const handleUploadOpen = (item) => {
         setOpenUploadForm(true);
         setEditCaffForm(item);
+        console.log(caffPics);
+        console.log(caffPic);
     };
     const handleUploadClose = () => {
         setOpenUploadForm(false);
@@ -124,7 +126,7 @@ const Library = ({ isLoading }) => {
     };
     const onDownloadItem = (item) => {
         const linkArray = item._links.self.href.split('/');
-        //dispatch(caffActions.getOneCaffPictureData(linkArray[5]));
+        dispatch(caffActions.getOneCaffPictureData(linkArray[5]));
     };
 
     const dispatch = useDispatch();
@@ -132,7 +134,6 @@ const Library = ({ isLoading }) => {
 
     useEffect(() => {
         dispatch(caffActions.getAllCaffPicture());
-        //dispatch(caffActions.getOneCaffPicture({ id: 1 }));
     }, [postCaffPending]);
 
     useEffect(() => {
@@ -166,22 +167,22 @@ const Library = ({ isLoading }) => {
                         onSubmit={async (values, {}) => {
                             var formdata = new FormData();
                             const editData = {
-                                title: values.title,
-                                description: values.description,
-                                price: values.price,
-                                ownerUserName: jwtDecode(authUser.accessToken).aud
+                                //title: values.title,
+                                //description: values.description,
+                                price: parseInt(values.price)
+                                //ownerUserName: jwtDecode(authUser.accessToken).aud
                             };
-                            formdata.append('title', values.title);
-                            formdata.append('description', values.description);
                             if (!editCaffForm) {
+                                formdata.append('title', values.title);
+                                formdata.append('description', values.description);
                                 formdata.append('caffFile', values.file);
+                                formdata.append('ownerUserName', jwtDecode(authUser.accessToken).aud);
                             }
-                            formdata.append('ownerUserName', jwtDecode(authUser.accessToken).aud);
                             formdata.append('price', values.price);
                             if (editCaffForm) {
                                 const linkArray = editCaffForm._links.self.href.split('/');
                                 console.log(editData);
-                                dispatch(caffActions.editCaffPicture({ id: linkArray[5], data: editData }));
+                                dispatch(caffActions.editCaffPicture({ id: linkArray[5], formData: formdata }));
                             } else {
                                 dispatch(caffActions.postCaffPicture(formdata));
                             }
