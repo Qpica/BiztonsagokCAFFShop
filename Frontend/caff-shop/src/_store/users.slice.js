@@ -22,7 +22,8 @@ function createInitialState() {
     return {
         users: {},
         error: null,
-        act_user: null
+        act_user: null,
+        role: null
     };
 }
 
@@ -33,7 +34,8 @@ function createExtraActions() {
         getAll: getAll(),
         register: register(),
         deleteUser: deleteUser(),
-        editUser: editUser()
+        editUser: editUser(),
+        getUser: getUser()
     };
 
     function getAll() {
@@ -46,13 +48,13 @@ function createExtraActions() {
         );
     }
     function deleteUser() {
-        return createAsyncThunk(
-            `${name}/deleteUser`,
-            async (username) => await fetchWrapper.delete(`${baseUrl}/${username}`, { username })
-        );
+        return createAsyncThunk(`${name}/deleteUser`, async (username) => await fetchWrapper.delete(`${baseUrl}/${username}`));
     }
     function editUser() {
         return createAsyncThunk(`${name}/editUser`, async (username) => await fetchWrapper.put(`${baseUrl}/${username}`, { username }));
+    }
+    function getUser() {
+        return createAsyncThunk(`${name}/getUser`, async (username) => await fetchWrapper.get(`${baseUrl}/${username}`));
     }
 }
 
@@ -61,7 +63,8 @@ function createExtraReducers() {
         ...getAll(),
         ...register(),
         ...deleteUser(),
-        ...editUser()
+        ...editUser(),
+        ...getUser()
     };
 
     function getAll() {
@@ -111,6 +114,21 @@ function createExtraReducers() {
                 state.error = null;
             },
             [fulfilled]: () => {},
+            [rejected]: (state, action) => {
+                state.error = action.error;
+            }
+        };
+    }
+    function getUser() {
+        var { pending, fulfilled, rejected } = extraActions.getUser;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+            },
+            [fulfilled]: (state, action) => {
+                state.act_user = action.payload;
+                state.role = action.payload.roles[0].roleName;
+            },
             [rejected]: (state, action) => {
                 state.error = action.error;
             }

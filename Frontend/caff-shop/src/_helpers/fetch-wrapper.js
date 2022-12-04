@@ -8,7 +8,7 @@ export const fetchWrapper = {
 };
 
 function request(method) {
-    return (url, body, isMedia) => {
+    return (url, body, isMedia, isCaffDown) => {
         const requestOptions = {
             method,
             headers: authHeader(url)
@@ -29,8 +29,12 @@ function request(method) {
                 requestOptions.body = JSON.stringify(body);
             }
         }
-        console.log(body);
-        return fetch(url, requestOptions).then(handleResponse);
+        console.log(body, method);
+        if (isCaffDown) {
+            return fetch(url, requestOptions).then(handleResponseCaff);
+        } else {
+            return fetch(url, requestOptions).then(handleResponse);
+        }
     };
 }
 
@@ -69,4 +73,8 @@ function handleResponse(response) {
 
         return data;
     });
+}
+
+function handleResponseCaff(response) {
+    return response;
 }

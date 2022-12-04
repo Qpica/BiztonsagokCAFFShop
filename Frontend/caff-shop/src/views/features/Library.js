@@ -90,6 +90,8 @@ const Library = ({ isLoading }) => {
     const [items, setItems] = React.useState(sampleItems);
     const { user: authUser } = useSelector((x) => x.auth);
     const { allCaffPicture: caffPics, pending: postCaffPending } = useSelector((x) => x.caff);
+    const { users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
+
     const fileRef = useRef(null);
 
     const handleUploadOpen = (item) => {
@@ -104,6 +106,11 @@ const Library = ({ isLoading }) => {
     const onDeleteItem = (item) => {
         const linkArray = item._links.self.href.split('/');
         dispatch(caffActions.deleteCaffPicture(linkArray[5]));
+        console.log(linkArray[5]);
+    };
+    const onDownloadItem = (item) => {
+        const linkArray = item._links.self.href.split('/');
+        //dispatch(caffActions.getOneCaffPictureData(linkArray[5]));
     };
 
     const dispatch = useDispatch();
@@ -113,6 +120,10 @@ const Library = ({ isLoading }) => {
         dispatch(caffActions.getAllCaffPicture());
         //dispatch(caffActions.getOneCaffPicture({ id: 1 }));
     }, [postCaffPending]);
+
+    useEffect(() => {
+        dispatch(userActions.getUser(jwtDecode(authUser.accessToken).aud));
+    }, []);
 
     const UploadForm = () => {
         return (
@@ -140,6 +151,12 @@ const Library = ({ isLoading }) => {
                         }
                         onSubmit={async (values, {}) => {
                             var formdata = new FormData();
+                            const editData = {
+                                title: values.title,
+                                description: values.description,
+                                price: values.price,
+                                ownerUserName: jwtDecode(authUser.accessToken).aud
+                            };
                             formdata.append('title', values.title);
                             formdata.append('description', values.description);
                             if (!editCaffForm) {
@@ -149,8 +166,8 @@ const Library = ({ isLoading }) => {
                             formdata.append('price', values.price);
                             if (editCaffForm) {
                                 const linkArray = editCaffForm._links.self.href.split('/');
-                                console.log(formdata);
-                                dispatch(caffActions.editCaffPicture({ id: linkArray[5], formData: formdata }));
+                                console.log(editData);
+                                dispatch(caffActions.editCaffPicture({ id: linkArray[5], data: editData }));
                             } else {
                                 dispatch(caffActions.postCaffPicture(formdata));
                             }
@@ -318,6 +335,16 @@ const Library = ({ isLoading }) => {
                                                                                         startIcon={<DeleteIcon />}
                                                                                     >
                                                                                         Delete
+                                                                                    </Button>
+                                                                                </Grid>
+                                                                                <Grid item>
+                                                                                    <Button
+                                                                                        sx={{ borderRadius: 10, width: 100, height: 40 }}
+                                                                                        variant="contained"
+                                                                                        onClick={() => onDownloadItem(item)}
+                                                                                        startIcon={<DeleteIcon />}
+                                                                                    >
+                                                                                        Download
                                                                                     </Button>
                                                                                 </Grid>
                                                                             </Grid>

@@ -13,6 +13,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from 'store/constant';
 import MyIcon from './MyIcon';
+import jwtDecode from 'jwt-decode';
 
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,10 +25,11 @@ const UserManagement = ({ isLoading }) => {
 
     const dispatch = useDispatch();
     const { user: authUser } = useSelector((x) => x.auth);
-    const { users: users, error: usersError } = useSelector((x) => x.users);
+    const { users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
 
     useEffect(() => {
         dispatch(userActions.getAll());
+        dispatch(userActions.getUser(jwtDecode(authUser.accessToken).aud));
     }, []);
 
     const handleDelete = (username) => {
@@ -54,6 +56,11 @@ const UserManagement = ({ isLoading }) => {
                                             </ListItemAvatar>
                                             <ListItemButton onClick={() => handleSelectedOpen()}>{users[index].userName}</ListItemButton>
                                             <Box sx={{ maxWidth: 50 }} />
+                                            {/*actUser !== null &&
+                                            actUser.roles !== null &&
+                                            actUser.roles[0] !== null &&
+                                            actUser.roles[0].roleName !== null ? (
+                                                actUser.roles[0].roleName !== 'ROLE_ADMINISTRATOR' ? (*/}
                                             <ListItemAvatar onClick={() => handleDelete(users[index].userName)} sx={{ m: 2 }}>
                                                 <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
                                             </ListItemAvatar>

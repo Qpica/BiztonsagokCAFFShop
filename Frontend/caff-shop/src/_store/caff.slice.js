@@ -49,19 +49,19 @@ function createExtraActions() {
         return createAsyncThunk(`${name}/getAllCaffPicture`, async () => await fetchWrapper.get(`${baseUrl}`));
     }
     function getOneCaffPicture() {
-        return createAsyncThunk(`${name}/getOneCaffPicture`, async ({ id }) => await fetchWrapper.get(`${baseUrl}/${id}`, { id }));
+        return createAsyncThunk(`${name}/getOneCaffPicture`, async (id) => await fetchWrapper.get(`${baseUrl}/${id}`));
     }
     function getOneCaffPictureData() {
-        return createAsyncThunk(`${name}/getOneCaffPictureData`, async ({ id }) => await fetchWrapper.get(`${baseUrl}/${id}/data`, { id }));
+        return createAsyncThunk(
+            `${name}/getOneCaffPictureData`,
+            async (id) => await fetchWrapper.get(`${baseUrl}/${id}/data`, null, null, true)
+        );
     }
     function postCaffPicture() {
         return createAsyncThunk(`${name}/postCaffPicture`, async (formData) => await fetchWrapper.post(`${baseUrl}`, formData, true));
     }
     function editCaffPicture() {
-        return createAsyncThunk(
-            `${name}/editCaffPicture`,
-            async ({ id, formData }) => await fetchWrapper.put(`${baseUrl}/${id}`, formData, true)
-        );
+        return createAsyncThunk(`${name}/editCaffPicture`, async ({ id, data }) => await fetchWrapper.put(`${baseUrl}/${id}`, data));
     }
     function deleteCaffPicture() {
         return createAsyncThunk(`${name}/deleteCaffPicture`, async (id) => await fetchWrapper.delete(`${baseUrl}/${id}`));
@@ -69,7 +69,7 @@ function createExtraActions() {
     function addComment() {
         return createAsyncThunk(
             `${name}/addComment`,
-            async ({ id, comment_value }) => await fetchWrapper.post(`${baseUrl}/${id}/comments`, { id, comment_value })
+            async ({ id, comment_value }) => await fetchWrapper.post(`${baseUrl}/${id}/comments`, { comment_value })
         );
     }
 }
@@ -131,6 +131,23 @@ function createExtraReducers() {
             }
         };
     }
+    /*
+    function postCaffPicture() {
+        var { pending, fulfilled, rejected } = extraActions.postCaffPicture;
+        return {
+            [pending]: (state) => {
+                state.error = null;
+                state.pending = true;
+            },
+            [fulfilled]: (state, action) => {
+                state.pending = false;
+            },
+            [rejected]: (state, action) => {
+                state.error = action.error;
+                state.pending = false;
+            }
+        };
+    }*/
     function postCaffPicture() {
         var { pending, fulfilled, rejected } = extraActions.postCaffPicture;
         return {
