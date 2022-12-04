@@ -135,7 +135,7 @@ public class CaffPictureController {
 		try {
 
 			String root  = System.getProperty("user.dir");
-			String path = root + "/Backend/CaffFileDirectory/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
+			String path = root + "/CaffFileDirectory/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
 			//String path = "/src/main/resources/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
 			File dest = new File(path);
 
