@@ -13,77 +13,54 @@ import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from 'store/constant';
 import MyIcon from './MyIcon';
+import jwtDecode from 'jwt-decode';
 
-const sampleUsers = [
-    { id: 1, name: 'Kovacs Zoltan' },
-    { id: 2, name: 'Nagy Bela' },
-    { id: 3, name: 'Minta Jozef' }
-];
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { userActions } from '_store';
 
 const UserManagement = ({ isLoading }) => {
     const theme = useTheme();
 
-    const [users, setUsers] = React.useState(sampleUsers);
-    const [selectedUserId, setSelectedUserId] = React.useState(null);
-    const [openDelete, setOpenDelete] = React.useState(false);
+    const dispatch = useDispatch();
+    const { user: authUser } = useSelector((x) => x.auth);
+    const { role: role, users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
 
-    const handleDeleteOpen = (id) => {
-        setOpenDelete(true);
-        setSelectedUserId(id);
-    };
-    const handleDeleteClose = () => {
-        setOpenDelete(false);
-    };
-    const handleDeleteConfirm = () => {
-        console.log('Network call here');
-        var newUsers = users.filter((e) => e.id !== selectedUserId);
-        console.log(newUsers);
-        setUsers(newUsers);
-        handleDeleteClose();
+    useEffect(() => {
+        dispatch(userActions.getAll());
+        dispatch(userActions.getUser(jwtDecode(authUser.accessToken).aud));
+    }, []);
+
+    const handleDelete = (username) => {
+        dispatch(userActions.deleteUser(username));
+        dispatch(userActions.getAll());
     };
 
     const handleSelectedOpen = () => {
         console.log('clicked - no action');
     };
-    const MyDeleteDialog = () => {
-        return (
-            <Dialog
-                open={openDelete}
-                onClose={() => handleDeleteClose()}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{'Confirm delete?'}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description"> </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleDeleteClose()}>Cancel</Button>
-                    <Button onClick={() => handleDeleteConfirm()}>Delete</Button>
-                </DialogActions>
-            </Dialog>
-        );
-    };
 
     return (
         <>
-            <MyDeleteDialog />
             <MainCard title="User management">
                 <Grid container direction="column">
                     <Grid item sy={{ p: 5.0 }}>
                         <List sx={{ maxWidth: 450 }}>
-                            {users.map((user) => {
+                            {Object.keys(users).map((index) => {
                                 return (
-                                    <div key={user.id}>
+                                    <div key={index}>
                                         <ListItem>
                                             <ListItemAvatar onClick={() => handleSelectedOpen()}>
                                                 <MyIcon icon={<User fontSize="inherit" />} />
                                             </ListItemAvatar>
-                                            <ListItemButton onClick={() => handleSelectedOpen()}>{user.name}</ListItemButton>
+                                            <ListItemButton onClick={() => handleSelectedOpen()}>{users[index].userName}</ListItemButton>
                                             <Box sx={{ maxWidth: 50 }} />
-                                            <ListItemAvatar onClick={() => handleDeleteOpen(user.id)} sx={{ m: 2 }}>
-                                                <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
-                                            </ListItemAvatar>
+                                            {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
+                                                <ListItemAvatar onClick={() => handleDelete(users[index].userName)} sx={{ m: 2 }}>
+                                                    <MyIcon color={red[400]} icon={<Delete fontSize="inherit" />} />
+                                                </ListItemAvatar>
+                                            ) : null}
                                         </ListItem>
                                     </div>
                                 );
