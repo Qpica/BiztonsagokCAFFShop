@@ -89,6 +89,8 @@ public class CaffPictureService {
 		}
 		result.setOwner(owner);
 		result.setCaffData(parseCaff(caffPicture.getPath()));
+		result.setHeight(parseCaff(caffPicture.getPath()).content()[0].ciff().height());
+		result.setWidth(parseCaff(caffPicture.getPath()).content()[0].ciff().width());
 		return result;
 	}
 
