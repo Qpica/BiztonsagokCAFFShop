@@ -54,6 +54,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef } from 'react';
 import { caffActions, userActions } from '_store';
 import ViewImage from 'ui-component/ViewFile';
+import { width } from '@mui/system';
 
 const sampleItems = [
     {
@@ -97,12 +98,789 @@ const Library = ({ isLoading }) => {
     const { users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
 
     const fileRef = useRef(null);
+    const image = null;
 
     const handleUploadOpen = (item) => {
         setOpenUploadForm(true);
         setEditCaffForm(item);
         console.log(caffPics);
-        console.log(caffPic);
+        console.log(caffPics[0].height);
+        console.log(caffPics[0].caffData.preview);
+        const data = caffPics[0].caffData.preview;
+
+        const pixels2Base64 = (pixels, width, height) => {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = length;
+            const imageData = pixels.createImageData(width, height);
+            const dataURL = canvas.toDataURL('image/png', 1);
+            canvas.remove();
+            return dataURL;
+        };
+        const nyanCat = [
+            [
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#ff1111ff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#ff1111ff',
+                '#ff1111ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#ffd29bff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#000000ff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#ffd29bff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#fea70aff',
+                '#fea70aff',
+                '#fea70aff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fea70aff',
+                '#fea70aff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#ffd29bff',
+                '#000000ff',
+                '#00000000',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000'
+            ],
+            [
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#ffd29bff',
+                '#000000ff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000'
+            ],
+            [
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000'
+            ],
+            [
+                '#fefe06ff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#fefe06ff',
+                '#fefe06ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000'
+            ],
+            [
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#000000ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff'
+            ],
+            [
+                '#48fe0bff',
+                '#48fe0bff',
+                '#48fe0bff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#fefefeff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#fefefeff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff'
+            ],
+            [
+                '#48fe0bff',
+                '#000000ff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff'
+            ],
+            [
+                '#0eadfeff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#fea4a6ff',
+                '#fea4a6ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#fea4a6ff',
+                '#fea4a6ff',
+                '#000000ff'
+            ],
+            [
+                '#0eadfeff',
+                '#0eadfeff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#0eadfeff',
+                '#000000ff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#eb4ab4ff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#fea4a6ff',
+                '#fea4a6ff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#fea4a6ff',
+                '#fea4a6ff',
+                '#000000ff'
+            ],
+            [
+                '#0eadfeff',
+                '#0eadfeff',
+                '#0eadfeff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#0eadfeff',
+                '#0eadfeff',
+                '#000000ff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#fea4feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000'
+            ],
+            [
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#000000ff',
+                '#000000ff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#ffd29bff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#7543feff',
+                '#7543feff',
+                '#7543feff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#7543feff',
+                '#7543feff',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000',
+                '#000000ff',
+                '#a9a7aaff',
+                '#a9a7aaff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ],
+            [
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#000000ff',
+                '#000000ff',
+                '#000000ff',
+                '#00000000',
+                '#00000000',
+                '#00000000'
+            ]
+        ];
+        const img = document.querySelector('img');
+        img.src = pixels2Base64(nyanCat);
     };
     const handleUploadClose = () => {
         setOpenUploadForm(false);
@@ -142,142 +920,144 @@ const Library = ({ isLoading }) => {
 
     const UploadForm = () => {
         return (
-            <Dialog
-                open={openUploadForm}
-                onClose={() => handleUploadClose()}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogContent>
-                    <Formik
-                        initialValues={
-                            editCaffForm
-                                ? {
-                                      title: editCaffForm.title,
-                                      description: editCaffForm.description,
-                                      price: editCaffForm.price
-                                  }
-                                : {
-                                      title: '',
-                                      description: '',
-                                      price: 0,
-                                      file: null
-                                  }
-                        }
-                        onSubmit={async (values, {}) => {
-                            var formdata = new FormData();
-                            const editData = {
-                                //title: values.title,
-                                //description: values.description,
-                                price: parseInt(values.price)
-                                //ownerUserName: jwtDecode(authUser.accessToken).aud
-                            };
-                            if (!editCaffForm) {
-                                formdata.append('title', values.title);
-                                formdata.append('description', values.description);
-                                formdata.append('caffFile', values.file);
-                                formdata.append('ownerUserName', jwtDecode(authUser.accessToken).aud);
+            <>
+                <Dialog
+                    open={openUploadForm}
+                    onClose={() => handleUploadClose()}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogContent>
+                        <Formik
+                            initialValues={
+                                editCaffForm
+                                    ? {
+                                          title: editCaffForm.title,
+                                          description: editCaffForm.description,
+                                          price: editCaffForm.price
+                                      }
+                                    : {
+                                          title: '',
+                                          description: '',
+                                          price: 0,
+                                          file: null
+                                      }
                             }
-                            formdata.append('price', values.price);
-                            if (editCaffForm) {
-                                const linkArray = editCaffForm._links.self.href.split('/');
-                                console.log(editData);
-                                dispatch(caffActions.editCaffPicture({ id: linkArray[5], formData: formdata }));
-                            } else {
-                                dispatch(caffActions.postCaffPicture(formdata));
-                            }
-                            //console.log(values.file);
-                            handleUploadClose();
-                        }}
-                    >
-                        {({ values, handleBlur, handleChange, handleSubmit, isSubmitting, setFieldValue, setFieldTouched }) => (
-                            <>
-                                {editCaffForm ? <h3>Edit</h3> : <h3>Create</h3>}
-                                <form noValidate onSubmit={handleSubmit}>
-                                    <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                                        <InputLabel htmlFor="title">Title</InputLabel>
-                                        <OutlinedInput
-                                            id="title"
-                                            type="text"
-                                            name="title"
-                                            value={values.title}
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            label="Title"
-                                            inputProps={{}}
-                                        />
-                                    </FormControl>
-                                    <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                                        <InputLabel htmlFor="description">Description</InputLabel>
-                                        <OutlinedInput
-                                            id="description"
-                                            type="text"
-                                            name="description"
-                                            value={values.description}
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            label="Description"
-                                            inputProps={{}}
-                                        />
-                                    </FormControl>
-                                    <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                                        <InputLabel htmlFor="price">Price</InputLabel>
-                                        <OutlinedInput
-                                            id="price"
-                                            type="int"
-                                            name="price"
-                                            value={values.price}
-                                            onBlur={handleBlur}
-                                            onChange={handleChange}
-                                            label="Price"
-                                            inputProps={{}}
-                                        />
-                                    </FormControl>
-                                    {!editCaffForm && (
+                            onSubmit={async (values, {}) => {
+                                var formdata = new FormData();
+                                const editData = {
+                                    //title: values.title,
+                                    //description: values.description,
+                                    price: parseInt(values.price)
+                                    //ownerUserName: jwtDecode(authUser.accessToken).aud
+                                };
+                                if (!editCaffForm) {
+                                    formdata.append('title', values.title);
+                                    formdata.append('description', values.description);
+                                    formdata.append('caffFile', values.file);
+                                    formdata.append('ownerUserName', jwtDecode(authUser.accessToken).aud);
+                                }
+                                formdata.append('price', values.price);
+                                if (editCaffForm) {
+                                    const linkArray = editCaffForm._links.self.href.split('/');
+                                    console.log(editData);
+                                    dispatch(caffActions.editCaffPicture({ id: linkArray[5], formData: formdata }));
+                                } else {
+                                    dispatch(caffActions.postCaffPicture(formdata));
+                                }
+                                //console.log(values.file);
+                                handleUploadClose();
+                            }}
+                        >
+                            {({ values, handleBlur, handleChange, handleSubmit, isSubmitting, setFieldValue, setFieldTouched }) => (
+                                <>
+                                    {editCaffForm ? <h3>Edit</h3> : <h3>Create</h3>}
+                                    <form noValidate onSubmit={handleSubmit}>
                                         <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                            <InputLabel htmlFor="title">Title</InputLabel>
                                             <OutlinedInput
-                                                ref={fileRef}
-                                                id="file"
-                                                type="file"
-                                                name="file"
+                                                id="title"
+                                                type="text"
+                                                name="title"
+                                                value={values.title}
                                                 onBlur={handleBlur}
-                                                //onChange={handleChange}
-                                                onChange={(event) => {
-                                                    //const fileData = event.currentTarget.files[0];
-                                                    setFieldValue('file', event.target.files[0]);
-                                                    //setFieldValue('file', { data: fileData, fileName: '_caff' });
-                                                    //setTimeout(() => setFieldTouched(file, true));
-                                                    //console.log(fileData, 'ss');
-                                                }}
-                                                label="File"
+                                                onChange={handleChange}
+                                                label="Title"
                                                 inputProps={{}}
                                             />
                                         </FormControl>
-                                    )}
-                                    <Box sx={{ mt: 2 }}>
-                                        <AnimateButton>
-                                            <Button
-                                                disableElevation
-                                                disabled={isSubmitting}
-                                                fullWidth
-                                                size="large"
-                                                type="submit"
-                                                variant="contained"
-                                                color="secondary"
-                                            >
-                                                Save
-                                            </Button>
-                                        </AnimateButton>
-                                    </Box>
-                                </form>
-                            </>
-                        )}
-                    </Formik>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleUploadClose()}>Cancel</Button>
-                </DialogActions>
-            </Dialog>
+                                        <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                            <InputLabel htmlFor="description">Description</InputLabel>
+                                            <OutlinedInput
+                                                id="description"
+                                                type="text"
+                                                name="description"
+                                                value={values.description}
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                label="Description"
+                                                inputProps={{}}
+                                            />
+                                        </FormControl>
+                                        <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                            <InputLabel htmlFor="price">Price</InputLabel>
+                                            <OutlinedInput
+                                                id="price"
+                                                type="int"
+                                                name="price"
+                                                value={values.price}
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                label="Price"
+                                                inputProps={{}}
+                                            />
+                                        </FormControl>
+                                        {!editCaffForm && (
+                                            <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                                <OutlinedInput
+                                                    ref={fileRef}
+                                                    id="file"
+                                                    type="file"
+                                                    name="file"
+                                                    onBlur={handleBlur}
+                                                    //onChange={handleChange}
+                                                    onChange={(event) => {
+                                                        //const fileData = event.currentTarget.files[0];
+                                                        setFieldValue('file', event.target.files[0]);
+                                                        //setFieldValue('file', { data: fileData, fileName: '_caff' });
+                                                        //setTimeout(() => setFieldTouched(file, true));
+                                                        //console.log(fileData, 'ss');
+                                                    }}
+                                                    label="File"
+                                                    inputProps={{}}
+                                                />
+                                            </FormControl>
+                                        )}
+                                        <Box sx={{ mt: 2 }}>
+                                            <AnimateButton>
+                                                <Button
+                                                    disableElevation
+                                                    disabled={isSubmitting}
+                                                    fullWidth
+                                                    size="large"
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="secondary"
+                                                >
+                                                    Save
+                                                </Button>
+                                            </AnimateButton>
+                                        </Box>
+                                    </form>
+                                </>
+                            )}
+                        </Formik>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => handleUploadClose()}>Cancel</Button>
+                    </DialogActions>
+                </Dialog>
+            </>
         );
     };
 
