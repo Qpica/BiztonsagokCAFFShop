@@ -112,21 +112,23 @@ const Library = ({ isLoading }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         //context = canvas.getContext('2d');
+        /* <canvas
+                                                                                      width={item.width}
+                                                                                      height={item.height}
+                                                                                      ref={(el) => (this.canvas = el)}
+                                                                                  />*/
     }, []);
+
+    const handleDraw = (item) => {
+        const ctx = this.canvas.getContext('2d');
+        const imageData = ctx.createImageData(item.width, item.height);
+        imageData.data = item.caffData.preview;
+        ctx.putImageData(imageData, 0, 0);
+    };
 
     const handleUploadOpen = (item) => {
         setOpenUploadForm(true);
         setEditCaffForm(item);
-        /*console.log(caffPics);
-        console.log(caffPics[0].height);
-        console.log(caffPics[0].caffData.preview);
-        const data = caffPics[0].caffData.preview;*/
-
-        /*var imagedata = context.createImageData(caffPics[0].width, caffPics[0].height);
-        imagedata.data = caffPics[0].caffData.preview;
-        imagedata.height = caffPics[0].height;
-        imagedata.width = caffPics[0].width;
-        canvas.putImageData(imagedata, 0, 0);*/
     };
     const handleUploadClose = () => {
         setOpenUploadForm(false);
@@ -147,7 +149,8 @@ const Library = ({ isLoading }) => {
     };
 
     const handleDownload = (item) => {
-        console.log('Need implementation - download');
+        const linkArray = item._links.self.href.split('/');
+        dispatch(caffActions.getOneCaffPicture(linkArray[5]));
     };
 
     const onDeleteItem = (item) => {
@@ -403,7 +406,7 @@ const Library = ({ isLoading }) => {
                                                                                                   height: 40
                                                                                               }}
                                                                                               variant="contained"
-                                                                                              onClick={() => handleBuy(item)}
+                                                                                              onClick={() => handleDraw(item)}
                                                                                               startIcon={<BuyIcon />}
                                                                                           >
                                                                                               Buy
@@ -601,39 +604,20 @@ const Library = ({ isLoading }) => {
                                                                       <Grid container direction="row" spacing={0}>
                                                                           <Grid item>
                                                                               <Grid container direction="row" spacing={1}>
-                                                                                  {(!item.isDownloadEnabled ||
-                                                                                      item.isDownloadEnabled == null) && (
-                                                                                      <Grid item>
-                                                                                          <Button
-                                                                                              sx={{
-                                                                                                  borderRadius: 10,
-                                                                                                  width: 150,
-                                                                                                  height: 40
-                                                                                              }}
-                                                                                              variant="contained"
-                                                                                              onClick={() => handleBuy(item)}
-                                                                                              startIcon={<BuyIcon />}
-                                                                                          >
-                                                                                              Buy
-                                                                                          </Button>
-                                                                                      </Grid>
-                                                                                  )}
-                                                                                  {item.isDownloadEnabled && (
-                                                                                      <Grid item>
-                                                                                          <Button
-                                                                                              sx={{
-                                                                                                  borderRadius: 10,
-                                                                                                  width: 150,
-                                                                                                  height: 40
-                                                                                              }}
-                                                                                              variant="contained"
-                                                                                              onClick={() => handleDownload(item)}
-                                                                                              startIcon={<DownloadIcon />}
-                                                                                          >
-                                                                                              Download
-                                                                                          </Button>
-                                                                                      </Grid>
-                                                                                  )}
+                                                                                  <Grid item>
+                                                                                      <Button
+                                                                                          sx={{
+                                                                                              borderRadius: 10,
+                                                                                              width: 150,
+                                                                                              height: 40
+                                                                                          }}
+                                                                                          variant="contained"
+                                                                                          onClick={() => handleDownload(item)}
+                                                                                          startIcon={<DownloadIcon />}
+                                                                                      >
+                                                                                          Download
+                                                                                      </Button>
+                                                                                  </Grid>
                                                                                   {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
                                                                                       <>
                                                                                           <Grid item>
