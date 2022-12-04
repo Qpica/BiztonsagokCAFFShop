@@ -21,6 +21,8 @@ public class CaffPictureResponseDTO extends RepresentationModel<CaffPictureRespo
 	private UserResponseDTO owner;
 	private int price;
 	private CAFF caffData;
+	private int height;
+	private int width;
 	public CaffPictureResponseDTO(CaffPicture caffPicture) {
 		this.title = caffPicture.getTitle();
 		this.description = caffPicture.getDescription();
