@@ -23,7 +23,8 @@ function createInitialState() {
         users: {},
         error: null,
         act_user: null,
-        role: null
+        role: null,
+        act_role: null
     };
 }
 
@@ -127,7 +128,7 @@ function createExtraReducers() {
             },
             [fulfilled]: (state, action) => {
                 state.act_user = action.payload;
-                //state.role = action.payload.roles[0].roleName;
+                state.role = action.payload.roles[0].roleName;
             },
             [rejected]: (state, action) => {
                 state.error = action.error;

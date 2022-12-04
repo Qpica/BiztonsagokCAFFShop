@@ -94,797 +94,52 @@ const Library = ({ isLoading }) => {
     const [commentsEnabled, setCommentsEnabled] = React.useState(false);
     const [items, setItems] = React.useState(sampleItems);
     const { user: authUser } = useSelector((x) => x.auth);
-    const { allCaffPicture: caffPics, pending: postCaffPending, caffPicture: caffPic } = useSelector((x) => x.caff);
+    const {
+        allCaffPicture: caffPics,
+        pending: postCaffPending,
+        caffPicture: caffPic,
+        searchPictures: searchPics
+    } = useSelector((x) => x.caff);
     const { users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
 
+    const canvasRef = useRef(null);
     const fileRef = useRef(null);
     const image = null;
+    const context = null;
+    var search;
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        //context = canvas.getContext('2d');
+    }, []);
 
     const handleUploadOpen = (item) => {
         setOpenUploadForm(true);
         setEditCaffForm(item);
-        console.log(caffPics);
+        /*console.log(caffPics);
         console.log(caffPics[0].height);
         console.log(caffPics[0].caffData.preview);
-        const data = caffPics[0].caffData.preview;
+        const data = caffPics[0].caffData.preview;*/
 
-        const pixels2Base64 = (pixels, width, height) => {
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = length;
-            const imageData = pixels.createImageData(width, height);
-            const dataURL = canvas.toDataURL('image/png', 1);
-            canvas.remove();
-            return dataURL;
-        };
-        const nyanCat = [
-            [
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#ff1111ff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#ff1111ff',
-                '#ff1111ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#ffd29bff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#000000ff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#ffd29bff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#fea70aff',
-                '#fea70aff',
-                '#fea70aff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fea70aff',
-                '#fea70aff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#ffd29bff',
-                '#000000ff',
-                '#00000000',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000'
-            ],
-            [
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#ffd29bff',
-                '#000000ff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000'
-            ],
-            [
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000'
-            ],
-            [
-                '#fefe06ff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#fefe06ff',
-                '#fefe06ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000'
-            ],
-            [
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#000000ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff'
-            ],
-            [
-                '#48fe0bff',
-                '#48fe0bff',
-                '#48fe0bff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#fefefeff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#fefefeff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff'
-            ],
-            [
-                '#48fe0bff',
-                '#000000ff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff'
-            ],
-            [
-                '#0eadfeff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#fea4a6ff',
-                '#fea4a6ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#fea4a6ff',
-                '#fea4a6ff',
-                '#000000ff'
-            ],
-            [
-                '#0eadfeff',
-                '#0eadfeff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#0eadfeff',
-                '#000000ff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#eb4ab4ff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#fea4a6ff',
-                '#fea4a6ff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#fea4a6ff',
-                '#fea4a6ff',
-                '#000000ff'
-            ],
-            [
-                '#0eadfeff',
-                '#0eadfeff',
-                '#0eadfeff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#0eadfeff',
-                '#0eadfeff',
-                '#000000ff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#fea4feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000'
-            ],
-            [
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#000000ff',
-                '#000000ff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#ffd29bff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#7543feff',
-                '#7543feff',
-                '#7543feff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#7543feff',
-                '#7543feff',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000',
-                '#000000ff',
-                '#a9a7aaff',
-                '#a9a7aaff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ],
-            [
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#000000ff',
-                '#000000ff',
-                '#000000ff',
-                '#00000000',
-                '#00000000',
-                '#00000000'
-            ]
-        ];
-        const img = document.querySelector('img');
-        img.src = pixels2Base64(nyanCat);
+        /*var imagedata = context.createImageData(caffPics[0].width, caffPics[0].height);
+        imagedata.data = caffPics[0].caffData.preview;
+        imagedata.height = caffPics[0].height;
+        imagedata.width = caffPics[0].width;
+        canvas.putImageData(imagedata, 0, 0);*/
     };
     const handleUploadClose = () => {
         setOpenUploadForm(false);
         setEditCaffForm(null);
+    };
+
+    const handleSearch = () => {
+        dispatch(caffActions.search({ Title: 'a' }));
+    };
+
+    const handleBuy = (item) => {
+        item.isDownloadEnabled = true;
+        console.log('clicked');
+        console.log(items);
     };
 
     const handleDownload = (item) => {
@@ -895,10 +150,6 @@ const Library = ({ isLoading }) => {
         const linkArray = item._links.self.href.split('/');
         dispatch(caffActions.deleteCaffPicture(linkArray[5]));
         console.log(linkArray[5]);
-    };
-    const onDownloadItem = (item) => {
-        const linkArray = item._links.self.href.split('/');
-        dispatch(caffActions.getOneCaffPictureData(linkArray[5]));
     };
 
     const dispatch = useDispatch();
@@ -967,32 +218,36 @@ const Library = ({ isLoading }) => {
                                 <>
                                     {editCaffForm ? <h3>Edit</h3> : <h3>Create</h3>}
                                     <form noValidate onSubmit={handleSubmit}>
-                                        <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                                            <InputLabel htmlFor="title">Title</InputLabel>
-                                            <OutlinedInput
-                                                id="title"
-                                                type="text"
-                                                name="title"
-                                                value={values.title}
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                label="Title"
-                                                inputProps={{}}
-                                            />
-                                        </FormControl>
-                                        <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
-                                            <InputLabel htmlFor="description">Description</InputLabel>
-                                            <OutlinedInput
-                                                id="description"
-                                                type="text"
-                                                name="description"
-                                                value={values.description}
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                                label="Description"
-                                                inputProps={{}}
-                                            />
-                                        </FormControl>
+                                        {!editCaffForm && (
+                                            <>
+                                                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                                    <InputLabel htmlFor="title">Title</InputLabel>
+                                                    <OutlinedInput
+                                                        id="title"
+                                                        type="text"
+                                                        name="title"
+                                                        value={values.title}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        label="Title"
+                                                        inputProps={{}}
+                                                    />
+                                                </FormControl>
+                                                <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
+                                                    <InputLabel htmlFor="description">Description</InputLabel>
+                                                    <OutlinedInput
+                                                        id="description"
+                                                        type="text"
+                                                        name="description"
+                                                        value={values.description}
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        label="Description"
+                                                        inputProps={{}}
+                                                    />
+                                                </FormControl>
+                                            </>
+                                        )}
                                         <FormControl fullWidth sx={{ ...theme.typography.customInput }}>
                                             <InputLabel htmlFor="price">Price</InputLabel>
                                             <OutlinedInput
@@ -1066,7 +321,11 @@ const Library = ({ isLoading }) => {
                                 <SearchSection />
                             </Grid>
                             <Grid item>
-                                <Button sx={{ borderRadius: 10, width: 100, height: 40, m: 0.5 }} variant="contained">
+                                <Button
+                                    sx={{ borderRadius: 10, width: 100, height: 40, m: 0.5 }}
+                                    variant="contained"
+                                    onClick={() => handleSearch()}
+                                >
                                     Search
                                 </Button>
                             </Grid>
@@ -1092,191 +351,422 @@ const Library = ({ isLoading }) => {
                             <Grid item sy={{ p: 5.0 }}>
                                 <Grid container spacing={gridSpacing}>
                                     <Grid item xs={12} sm={12}>
-                                        {caffPics &&
-                                            caffPics.map((item, index) => {
-                                                return (
-                                                    <div key={index}>
-                                                        <SubCard title={item.title}>
-                                                            <Grid container direction="column">
-                                                                <Grid item>
-                                                                    <Box sx={{ m: 2.5 }}>
-                                                                        <Grid container direction="row">
-                                                                            <Grid item xs={12} sm={2}>
-                                                                                <MuiTypography variant="h5" gutterBottom>
-                                                                                    Filename:
-                                                                                </MuiTypography>
-                                                                            </Grid>
-                                                                            <Grid item xs={12} sm={6}>
-                                                                                <MuiTypography variant="h5" gutterBottom>
-                                                                                    {item.filename} //filename
-                                                                                </MuiTypography>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                        <Grid container direction="row">
-                                                                            <Grid item xs={12} sm={2}>
-                                                                                <MuiTypography variant="h5" gutterBottom>
-                                                                                    Price:
-                                                                                </MuiTypography>
-                                                                            </Grid>
-                                                                            <Grid item xs={12} sm={6}>
-                                                                                <MuiTypography variant="h5" gutterBottom>
-                                                                                    {item.price} $ //price here
-                                                                                </MuiTypography>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                    </Box>
-                                                                </Grid>
-                                                                <Grid item>
-                                                                    <Grid container direction="row" spacing={0}>
-                                                                        <Grid item>
-                                                                            <Grid container direction="row" spacing={1}>
-                                                                                <Grid item>
-                                                                                    <Button
-                                                                                        sx={{
-                                                                                            borderRadius: 10,
-                                                                                            width: 150,
-                                                                                            height: 40
-                                                                                        }}
-                                                                                        variant="contained"
-                                                                                        onClick={() => handleDownload(item)}
-                                                                                        startIcon={<DownloadIcon />}
-                                                                                    >
-                                                                                        Download
-                                                                                    </Button>
-                                                                                </Grid>
-                                                                                <Grid item>
-                                                                                    <Button
-                                                                                        sx={{ borderRadius: 10, width: 100, height: 40 }}
-                                                                                        variant="contained"
-                                                                                        onClick={() => handleUploadOpen(item)}
-                                                                                        startIcon={<EditIcon />}
-                                                                                    >
-                                                                                        Edit
-                                                                                    </Button>
-                                                                                </Grid>
-                                                                                <Grid item>
-                                                                                    <Button
-                                                                                        sx={{ borderRadius: 10, width: 100, height: 40 }}
-                                                                                        variant="contained"
-                                                                                        onClick={() => onDeleteItem(item)}
-                                                                                        startIcon={<DeleteIcon />}
-                                                                                    >
-                                                                                        Delete
-                                                                                    </Button>
-                                                                                </Grid>
-                                                                                <Grid item>
-                                                                                    <Button
-                                                                                        sx={{ borderRadius: 10, width: 100, height: 40 }}
-                                                                                        variant="contained"
-                                                                                        onClick={() => onDownloadItem(item)}
-                                                                                        startIcon={<DeleteIcon />}
-                                                                                    >
-                                                                                        Download
-                                                                                    </Button>
-                                                                                </Grid>
-                                                                            </Grid>
-                                                                        </Grid>
-                                                                    </Grid>
-                                                                </Grid>
-                                                                <Grid item sx={{ m: 2.0 }}>
-                                                                    {commentsEnabled && (
-                                                                        <>
-                                                                            <Grid item>
-                                                                                <MuiTypography variant="caption" gutterBottom>
-                                                                                    Comments
-                                                                                </MuiTypography>
-                                                                            </Grid>
-                                                                            <Grid item>
-                                                                                <List sx={{ maxWidth: 450 }}>
-                                                                                    {item.userCommentList.map((comment, index) => {
-                                                                                        return (
-                                                                                            <div key={index}>
-                                                                                                <ListItem>
-                                                                                                    <ListItemAvatar>
-                                                                                                        <MyIcon
-                                                                                                            color={yellow[400]}
-                                                                                                            icon={
-                                                                                                                <CommentIcon fontSize="sm" />
-                                                                                                            }
-                                                                                                        />
-                                                                                                    </ListItemAvatar>
-                                                                                                    <ListItemButton sx={{ maxWidth: 550 }}>
-                                                                                                        {comment.ownerName}:{' '}
-                                                                                                        {comment.comment_value}
-                                                                                                    </ListItemButton>
-                                                                                                </ListItem>
-                                                                                            </div>
-                                                                                        );
-                                                                                    })}
-                                                                                </List>
-                                                                            </Grid>
-                                                                            <Formik
-                                                                                initialValues={{
-                                                                                    comment: ''
-                                                                                }}
-                                                                                onSubmit={async (values, {}) => {
-                                                                                    const linkArray = item._links.self.href.split('/');
-                                                                                    dispatch(
-                                                                                        caffActions.addComment({
-                                                                                            id: linkArray[5],
-                                                                                            comment_value: values.comment
-                                                                                        })
-                                                                                    );
-                                                                                    values.comment = '';
-                                                                                }}
-                                                                            >
-                                                                                {({
-                                                                                    values,
-                                                                                    handleSubmit,
-                                                                                    isSubmitting,
-                                                                                    handleBlur,
-                                                                                    handleChange
-                                                                                }) => (
-                                                                                    <>
-                                                                                        <form noValidate onSubmit={handleSubmit}>
-                                                                                            <FormControl
-                                                                                                sx={{ ...theme.typography.customInput }}
-                                                                                            >
-                                                                                                <InputLabel htmlFor="comment">
-                                                                                                    Write something...
-                                                                                                </InputLabel>
-                                                                                                <OutlinedInput
-                                                                                                    id="comment"
-                                                                                                    type="text"
-                                                                                                    name="comment"
-                                                                                                    value={values.comment}
-                                                                                                    onBlur={handleBlur}
-                                                                                                    onChange={handleChange}
-                                                                                                    label="Comment"
-                                                                                                    inputProps={{}}
-                                                                                                />
-                                                                                            </FormControl>
-                                                                                            <Box sx={{ mt: 2 }}>
-                                                                                                <AnimateButton>
-                                                                                                    <Button
-                                                                                                        disableElevation
-                                                                                                        disabled={isSubmitting}
-                                                                                                        size="large"
-                                                                                                        type="submit"
-                                                                                                        variant="contained"
-                                                                                                        color="secondary"
-                                                                                                    >
-                                                                                                        Add Comment
-                                                                                                    </Button>
-                                                                                                </AnimateButton>
-                                                                                            </Box>
-                                                                                        </form>
-                                                                                    </>
-                                                                                )}
-                                                                            </Formik>
-                                                                        </>
-                                                                    )}
-                                                                </Grid>
-                                                            </Grid>
-                                                        </SubCard>
-                                                    </div>
-                                                );
-                                            })}
+                                        {searchPics
+                                            ? searchPics.map((item, index) => {
+                                                  return (
+                                                      <div key={index}>
+                                                          <SubCard title={item.title}>
+                                                              <Grid container direction="column">
+                                                                  <Grid item>
+                                                                      <Box sx={{ m: 2.5 }}>
+                                                                          <Grid container direction="row">
+                                                                              <Grid item xs={12} sm={2}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      Description:
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                              <Grid item xs={12} sm={6}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      {item.description}
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                          </Grid>
+                                                                          <Grid container direction="row">
+                                                                              <Grid item xs={12} sm={2}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      Price:
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                              <Grid item xs={12} sm={6}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      {item.price} $
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                          </Grid>
+                                                                      </Box>
+                                                                  </Grid>
+                                                                  <Grid item>
+                                                                      <Grid container direction="row" spacing={0}>
+                                                                          <Grid item>
+                                                                              <Grid container direction="row" spacing={1}>
+                                                                                  {(!item.isDownloadEnabled ||
+                                                                                      item.isDownloadEnabled == null) && (
+                                                                                      <Grid item>
+                                                                                          <Button
+                                                                                              sx={{
+                                                                                                  borderRadius: 10,
+                                                                                                  width: 150,
+                                                                                                  height: 40
+                                                                                              }}
+                                                                                              variant="contained"
+                                                                                              onClick={() => handleBuy(item)}
+                                                                                              startIcon={<BuyIcon />}
+                                                                                          >
+                                                                                              Buy
+                                                                                          </Button>
+                                                                                      </Grid>
+                                                                                  )}
+                                                                                  {item.isDownloadEnabled && (
+                                                                                      <Grid item>
+                                                                                          <Button
+                                                                                              sx={{
+                                                                                                  borderRadius: 10,
+                                                                                                  width: 150,
+                                                                                                  height: 40
+                                                                                              }}
+                                                                                              variant="contained"
+                                                                                              onClick={() => handleDownload(item)}
+                                                                                              startIcon={<DownloadIcon />}
+                                                                                          >
+                                                                                              Download
+                                                                                          </Button>
+                                                                                      </Grid>
+                                                                                  )}
+                                                                                  {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
+                                                                                      <>
+                                                                                          <Grid item>
+                                                                                              <Button
+                                                                                                  sx={{
+                                                                                                      borderRadius: 10,
+                                                                                                      width: 100,
+                                                                                                      height: 40
+                                                                                                  }}
+                                                                                                  variant="contained"
+                                                                                                  onClick={() => handleUploadOpen(item)}
+                                                                                                  startIcon={<EditIcon />}
+                                                                                              >
+                                                                                                  Edit
+                                                                                              </Button>
+                                                                                          </Grid>
+                                                                                          <Grid item>
+                                                                                              <Button
+                                                                                                  sx={{
+                                                                                                      borderRadius: 10,
+                                                                                                      width: 100,
+                                                                                                      height: 40
+                                                                                                  }}
+                                                                                                  variant="contained"
+                                                                                                  onClick={() => onDeleteItem(item)}
+                                                                                                  startIcon={<DeleteIcon />}
+                                                                                              >
+                                                                                                  Delete
+                                                                                              </Button>
+                                                                                          </Grid>{' '}
+                                                                                      </>
+                                                                                  ) : null}
+                                                                              </Grid>
+                                                                          </Grid>
+                                                                      </Grid>
+                                                                  </Grid>
+                                                                  <Grid item sx={{ m: 2.0 }}>
+                                                                      {commentsEnabled && (
+                                                                          <>
+                                                                              <Grid item>
+                                                                                  <MuiTypography variant="caption" gutterBottom>
+                                                                                      Comments
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                              <Grid item>
+                                                                                  <List sx={{ maxWidth: 450 }}>
+                                                                                      {item.userCommentList.map((comment, index) => {
+                                                                                          return (
+                                                                                              <div key={index}>
+                                                                                                  <ListItem>
+                                                                                                      <ListItemAvatar>
+                                                                                                          <MyIcon
+                                                                                                              color={yellow[400]}
+                                                                                                              icon={
+                                                                                                                  <CommentIcon fontSize="sm" />
+                                                                                                              }
+                                                                                                          />
+                                                                                                      </ListItemAvatar>
+                                                                                                      <ListItemButton
+                                                                                                          sx={{ maxWidth: 550 }}
+                                                                                                      >
+                                                                                                          {comment.ownerName}:{' '}
+                                                                                                          {comment.comment_value}
+                                                                                                      </ListItemButton>
+                                                                                                  </ListItem>
+                                                                                              </div>
+                                                                                          );
+                                                                                      })}
+                                                                                  </List>
+                                                                              </Grid>
+                                                                              <Formik
+                                                                                  initialValues={{
+                                                                                      comment: ''
+                                                                                  }}
+                                                                                  onSubmit={async (values, {}) => {
+                                                                                      const linkArray = item._links.self.href.split('/');
+                                                                                      dispatch(
+                                                                                          caffActions.addComment({
+                                                                                              id: linkArray[5],
+                                                                                              comment_value: values.comment
+                                                                                          })
+                                                                                      );
+                                                                                      values.comment = '';
+                                                                                  }}
+                                                                              >
+                                                                                  {({
+                                                                                      values,
+                                                                                      handleSubmit,
+                                                                                      isSubmitting,
+                                                                                      handleBlur,
+                                                                                      handleChange
+                                                                                  }) => (
+                                                                                      <>
+                                                                                          <form noValidate onSubmit={handleSubmit}>
+                                                                                              <FormControl
+                                                                                                  sx={{ ...theme.typography.customInput }}
+                                                                                              >
+                                                                                                  <InputLabel htmlFor="comment">
+                                                                                                      Write something...
+                                                                                                  </InputLabel>
+                                                                                                  <OutlinedInput
+                                                                                                      id="comment"
+                                                                                                      type="text"
+                                                                                                      name="comment"
+                                                                                                      value={values.comment}
+                                                                                                      onBlur={handleBlur}
+                                                                                                      onChange={handleChange}
+                                                                                                      label="Comment"
+                                                                                                      inputProps={{}}
+                                                                                                  />
+                                                                                              </FormControl>
+                                                                                              <Box sx={{ mt: 2 }}>
+                                                                                                  <AnimateButton>
+                                                                                                      <Button
+                                                                                                          disableElevation
+                                                                                                          disabled={isSubmitting}
+                                                                                                          size="large"
+                                                                                                          type="submit"
+                                                                                                          variant="contained"
+                                                                                                          color="secondary"
+                                                                                                      >
+                                                                                                          Add Comment
+                                                                                                      </Button>
+                                                                                                  </AnimateButton>
+                                                                                              </Box>
+                                                                                          </form>
+                                                                                      </>
+                                                                                  )}
+                                                                              </Formik>
+                                                                          </>
+                                                                      )}
+                                                                  </Grid>
+                                                              </Grid>
+                                                          </SubCard>
+                                                      </div>
+                                                  );
+                                              })
+                                            : caffPics &&
+                                              caffPics.map((item, index) => {
+                                                  return (
+                                                      <div key={index}>
+                                                          <SubCard title={item.title}>
+                                                              <Grid container direction="column">
+                                                                  <Grid item>
+                                                                      <Box sx={{ m: 2.5 }}>
+                                                                          <Grid container direction="row">
+                                                                              <Grid item xs={12} sm={2}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      Description:
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                              <Grid item xs={12} sm={6}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      {item.description}
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                          </Grid>
+                                                                          <Grid container direction="row">
+                                                                              <Grid item xs={12} sm={2}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      Price:
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                              <Grid item xs={12} sm={6}>
+                                                                                  <MuiTypography variant="h5" gutterBottom>
+                                                                                      {item.price} $
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                          </Grid>
+                                                                      </Box>
+                                                                  </Grid>
+                                                                  <Grid item>
+                                                                      <Grid container direction="row" spacing={0}>
+                                                                          <Grid item>
+                                                                              <Grid container direction="row" spacing={1}>
+                                                                                  {(!item.isDownloadEnabled ||
+                                                                                      item.isDownloadEnabled == null) && (
+                                                                                      <Grid item>
+                                                                                          <Button
+                                                                                              sx={{
+                                                                                                  borderRadius: 10,
+                                                                                                  width: 150,
+                                                                                                  height: 40
+                                                                                              }}
+                                                                                              variant="contained"
+                                                                                              onClick={() => handleBuy(item)}
+                                                                                              startIcon={<BuyIcon />}
+                                                                                          >
+                                                                                              Buy
+                                                                                          </Button>
+                                                                                      </Grid>
+                                                                                  )}
+                                                                                  {item.isDownloadEnabled && (
+                                                                                      <Grid item>
+                                                                                          <Button
+                                                                                              sx={{
+                                                                                                  borderRadius: 10,
+                                                                                                  width: 150,
+                                                                                                  height: 40
+                                                                                              }}
+                                                                                              variant="contained"
+                                                                                              onClick={() => handleDownload(item)}
+                                                                                              startIcon={<DownloadIcon />}
+                                                                                          >
+                                                                                              Download
+                                                                                          </Button>
+                                                                                      </Grid>
+                                                                                  )}
+                                                                                  {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
+                                                                                      <>
+                                                                                          <Grid item>
+                                                                                              <Button
+                                                                                                  sx={{
+                                                                                                      borderRadius: 10,
+                                                                                                      width: 100,
+                                                                                                      height: 40
+                                                                                                  }}
+                                                                                                  variant="contained"
+                                                                                                  onClick={() => handleUploadOpen(item)}
+                                                                                                  startIcon={<EditIcon />}
+                                                                                              >
+                                                                                                  Edit
+                                                                                              </Button>
+                                                                                          </Grid>
+                                                                                          <Grid item>
+                                                                                              <Button
+                                                                                                  sx={{
+                                                                                                      borderRadius: 10,
+                                                                                                      width: 100,
+                                                                                                      height: 40
+                                                                                                  }}
+                                                                                                  variant="contained"
+                                                                                                  onClick={() => onDeleteItem(item)}
+                                                                                                  startIcon={<DeleteIcon />}
+                                                                                              >
+                                                                                                  Delete
+                                                                                              </Button>
+                                                                                          </Grid>{' '}
+                                                                                      </>
+                                                                                  ) : null}
+                                                                              </Grid>
+                                                                          </Grid>
+                                                                      </Grid>
+                                                                  </Grid>
+                                                                  <Grid item sx={{ m: 2.0 }}>
+                                                                      {commentsEnabled && (
+                                                                          <>
+                                                                              <Grid item>
+                                                                                  <MuiTypography variant="caption" gutterBottom>
+                                                                                      Comments
+                                                                                  </MuiTypography>
+                                                                              </Grid>
+                                                                              <Grid item>
+                                                                                  <List sx={{ maxWidth: 450 }}>
+                                                                                      {item.userCommentList.map((comment, index) => {
+                                                                                          return (
+                                                                                              <div key={index}>
+                                                                                                  <ListItem>
+                                                                                                      <ListItemAvatar>
+                                                                                                          <MyIcon
+                                                                                                              color={yellow[400]}
+                                                                                                              icon={
+                                                                                                                  <CommentIcon fontSize="sm" />
+                                                                                                              }
+                                                                                                          />
+                                                                                                      </ListItemAvatar>
+                                                                                                      <ListItemButton
+                                                                                                          sx={{ maxWidth: 550 }}
+                                                                                                      >
+                                                                                                          {comment.ownerName}:{' '}
+                                                                                                          {comment.comment_value}
+                                                                                                      </ListItemButton>
+                                                                                                  </ListItem>
+                                                                                              </div>
+                                                                                          );
+                                                                                      })}
+                                                                                  </List>
+                                                                              </Grid>
+                                                                              <Formik
+                                                                                  initialValues={{
+                                                                                      comment: ''
+                                                                                  }}
+                                                                                  onSubmit={async (values, {}) => {
+                                                                                      const linkArray = item._links.self.href.split('/');
+                                                                                      dispatch(
+                                                                                          caffActions.addComment({
+                                                                                              id: linkArray[5],
+                                                                                              comment_value: values.comment
+                                                                                          })
+                                                                                      );
+                                                                                      values.comment = '';
+                                                                                  }}
+                                                                              >
+                                                                                  {({
+                                                                                      values,
+                                                                                      handleSubmit,
+                                                                                      isSubmitting,
+                                                                                      handleBlur,
+                                                                                      handleChange
+                                                                                  }) => (
+                                                                                      <>
+                                                                                          <form noValidate onSubmit={handleSubmit}>
+                                                                                              <FormControl
+                                                                                                  sx={{ ...theme.typography.customInput }}
+                                                                                              >
+                                                                                                  <InputLabel htmlFor="comment">
+                                                                                                      Write something...
+                                                                                                  </InputLabel>
+                                                                                                  <OutlinedInput
+                                                                                                      id="comment"
+                                                                                                      type="text"
+                                                                                                      name="comment"
+                                                                                                      value={values.comment}
+                                                                                                      onBlur={handleBlur}
+                                                                                                      onChange={handleChange}
+                                                                                                      label="Comment"
+                                                                                                      inputProps={{}}
+                                                                                                  />
+                                                                                              </FormControl>
+                                                                                              <Box sx={{ mt: 2 }}>
+                                                                                                  <AnimateButton>
+                                                                                                      <Button
+                                                                                                          disableElevation
+                                                                                                          disabled={isSubmitting}
+                                                                                                          size="large"
+                                                                                                          type="submit"
+                                                                                                          variant="contained"
+                                                                                                          color="secondary"
+                                                                                                      >
+                                                                                                          Add Comment
+                                                                                                      </Button>
+                                                                                                  </AnimateButton>
+                                                                                              </Box>
+                                                                                          </form>
+                                                                                      </>
+                                                                                  )}
+                                                                              </Formik>
+                                                                          </>
+                                                                      )}
+                                                                  </Grid>
+                                                              </Grid>
+                                                          </SubCard>
+                                                      </div>
+                                                  );
+                                              })}
                                     </Grid>
                                 </Grid>
                             </Grid>

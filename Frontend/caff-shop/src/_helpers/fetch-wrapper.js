@@ -8,7 +8,7 @@ export const fetchWrapper = {
 };
 
 function request(method) {
-    return (url, body, isMedia, isCaffDown) => {
+    return (url, body, isMedia, isCaffDown, param) => {
         const requestOptions = {
             method,
             headers: authHeader(url)
@@ -32,6 +32,9 @@ function request(method) {
         console.log(body, method);
         if (isCaffDown) {
             return fetch(url, requestOptions).then(handleResponseCaff);
+        } else if (param) {
+            console.log(param);
+            return fetch(url + '?' + new URLSearchParams(param), requestOptions).then(handleResponse);
         } else {
             return fetch(url, requestOptions).then(handleResponse);
         }

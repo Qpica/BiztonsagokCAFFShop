@@ -78,7 +78,7 @@ function createExtraActions() {
         );
     }
     function search() {
-        return createAsyncThunk(`${name}/search`, async (title) => await fetchWrapper.post(`${baseUrl}/search`, { title }));
+        return createAsyncThunk(`${name}/search`, async (title) => await fetchWrapper.get(`${baseUrl}/search`, null, null, null, title));
     }
 }
 
@@ -229,7 +229,7 @@ function createExtraReducers() {
                 state.pending = true;
             },
             [fulfilled]: (state, action) => {
-                state.searchPictures = action.payload;
+                state.searchPictures = action.payload._embedded.caffPictureResponseDTOList;
                 state.pending = false;
             },
             [rejected]: (state, action) => {
