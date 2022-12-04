@@ -7,11 +7,14 @@ import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.services.CaffPictureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,8 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.File;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +35,7 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Slf4j
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/api/caffPictures")
 public class CaffPictureController {
@@ -90,13 +96,30 @@ public class CaffPictureController {
 	}
 
 	@GetMapping("/{id}/data")
-	public ResponseEntity<CaffPictureDataResponseDTO> getOneCaffPictureData(@PathVariable UUID id){
+	public ResponseEntity<Resource> getOneCaffPictureData(@PathVariable UUID id){
 
 		log.info(MessageFormat.format("[{0}]::[{1}]: Downloaded CaffPicture({2})!", LocalDateTime.now().toString(),
 				authenticationFacade.getCurrentUserFromContext().get().username(), id));
 
+		Optional<byte[]> result = caffPictureService.getCaffPictureData(id);
+		if (result.isPresent()){
+			ByteArrayResource resource = new ByteArrayResource(result.get());
+			return ResponseEntity.ok()
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.contentLength(resource.contentLength())
+					.header(HttpHeaders.CONTENT_DISPOSITION,
+							ContentDisposition.attachment()
+									.filename("CAFF")
+									.build().toString())
+					.body(resource);
+		}
+		else {
+			return ResponseEntity.noContent().build();
+		}
+		/*
 		Optional<CaffPictureDataResponseDTO> result = caffPictureService.getCaffPictureDataResponseDTO(id);
 		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+		 */
 	}
 
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
@@ -110,9 +133,17 @@ public class CaffPictureController {
 
 		Optional<CaffPicture> storedCaffPicture;
 		try {
+
+			String root  = System.getProperty("user.dir");
+			String path = root + "/Backend/CaffFileDirectory/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
+			//String path = "/src/main/resources/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".caff";
+			File dest = new File(path);
+
 			storedCaffPicture = caffPictureService.storeFile(
-					caffPictureService.caffPictureFromCaffPictureRequestDTO(caffPictureRequestDTO)
+					caffPictureService.caffPictureFromCaffPictureRequestDTO(caffPictureRequestDTO, path)
 			);
+
+			caffPictureRequestDTO.getCaffFile().transferTo(dest);
 
 			log.info(MessageFormat.format("[{0}]::[{1}]: Saved CaffPicture({2})!", LocalDateTime.now().toString(),
 					authenticationFacade.getCurrentUserFromContext().get().username(), storedCaffPicture.get().getId()));
@@ -132,8 +163,8 @@ public class CaffPictureController {
 	@PutMapping("/{id}")
 	@PreAuthorize("@authenticationService.hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<CaffPictureResponseDTO> updateOneCaffPicture(@PathVariable UUID id,
-																	   CaffPictureRequestDTO caffPictureRequestDTO){
-		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureRequestDTO);
+																	   CaffPictureUpdateRequestDTO caffPictureUpdateRequestDTO){
+		Optional<CaffPicture> caffPicture = caffPictureService.updateOne(id, caffPictureUpdateRequestDTO);
 		if(caffPicture.isPresent()){
 			CaffPictureResponseDTO caffPictureResponseDTO = caffPictureService.caffPictureResponseDTOFromCaffPicture(caffPicture.get());
 

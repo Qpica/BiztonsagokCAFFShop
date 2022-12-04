@@ -1,9 +1,8 @@
 package com.Biztonsagok.CAFFShop.dto;
 
 import com.Biztonsagok.CAFFShop.models.CaffPicture;
-import com.Biztonsagok.CAFFShop.models.User;
-import com.Biztonsagok.CAFFShop.models.UserComment;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.narcano.jni.CAFF;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,7 @@ public class CaffPictureResponseDTO extends RepresentationModel<CaffPictureRespo
 	private List<UserCommentResponseDTO> userCommentList;
 	private UserResponseDTO owner;
 	private int price;
-
+	private CAFF caffData;
 	public CaffPictureResponseDTO(CaffPicture caffPicture) {
 		this.title = caffPicture.getTitle();
 		this.description = caffPicture.getDescription();

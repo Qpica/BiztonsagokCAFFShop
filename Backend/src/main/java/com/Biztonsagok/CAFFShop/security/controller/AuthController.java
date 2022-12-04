@@ -5,15 +5,13 @@ import com.Biztonsagok.CAFFShop.security.service.AuthenticationFacade;
 import com.Biztonsagok.CAFFShop.security.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 
 @Slf4j
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -34,6 +32,7 @@ public class AuthController {
 				.build();
 	}
 
+	/*
 	@PostMapping("/register")
 	public void register(@RequestBody RegisterRequest registerRequest) {
 		authenticationService.register(registerRequest.username(), registerRequest.password());
@@ -41,7 +40,7 @@ public class AuthController {
 		log.info(MessageFormat.format("[{0}]::[User Registration]: User({1}) registered!", LocalDateTime.now().toString(), registerRequest.username()));
 
 	}
-
+	 */
 	@PostMapping("/refresh")
 	public RefreshTokenResponse refresh(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 
