@@ -31,27 +31,18 @@ const Profile = ({ isLoading }) => {
                 <Grid item sy={{ m: 1.0 }}>
                     <Grid container direction="column">
                         <Grid item sx={{ m: 2.0 }}>
-                            <MuiTypography sx={{ fontWeight: 'bold' }}>Modify your personal data</MuiTypography>
-                        </Grid>
-                        <Grid item sx={{ m: 2.0 }}>
                             <Grid container direction="column">
                                 <Grid item sx={{ m: 1.5 }}>
-                                    <TextField label="Username" defaultValue={jwtDecode(authUser.accessToken).aud} variant="standard" />
+                                    <MuiTypography variant="h5" gutterBottom>
+                                        User: {jwtDecode(authUser.accessToken).aud}
+                                    </MuiTypography>
                                 </Grid>
                                 <Grid item sx={{ m: 1.5 }}>
-                                    <TextField id="standard" label="Role" defaultValue="Hello World" variant="standard" />
+                                    <MuiTypography variant="h5" gutterBottom>
+                                        Role: //todo role here
+                                    </MuiTypography>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid item sx={{ m: 2.0 }}>
-                            <Button
-                                sx={{ borderRadius: 10, width: 100, height: 40 }}
-                                variant="contained"
-                                onClick={() => handleEdit()}
-                                startIcon={<SaveIcon />}
-                            >
-                                Save
-                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>

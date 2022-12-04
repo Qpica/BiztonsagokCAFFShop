@@ -109,12 +109,6 @@ const Library = ({ isLoading }) => {
         setEditCaffForm(null);
     };
 
-    const handleBuy = (item) => {
-        item.isDownloadEnabled = true;
-        console.log('clicked');
-        console.log(items);
-    };
-
     const handleDownload = (item) => {
         console.log('Need implementation - download');
     };
@@ -356,39 +350,20 @@ const Library = ({ isLoading }) => {
                                                                     <Grid container direction="row" spacing={0}>
                                                                         <Grid item>
                                                                             <Grid container direction="row" spacing={1}>
-                                                                                {(!item.isDownloadEnabled ||
-                                                                                    item.isDownloadEnabled == null) && (
-                                                                                    <Grid item>
-                                                                                        <Button
-                                                                                            sx={{
-                                                                                                borderRadius: 10,
-                                                                                                width: 150,
-                                                                                                height: 40
-                                                                                            }}
-                                                                                            variant="contained"
-                                                                                            onClick={() => handleBuy(item)}
-                                                                                            startIcon={<BuyIcon />}
-                                                                                        >
-                                                                                            Buy
-                                                                                        </Button>
-                                                                                    </Grid>
-                                                                                )}
-                                                                                {item.isDownloadEnabled && (
-                                                                                    <Grid item>
-                                                                                        <Button
-                                                                                            sx={{
-                                                                                                borderRadius: 10,
-                                                                                                width: 150,
-                                                                                                height: 40
-                                                                                            }}
-                                                                                            variant="contained"
-                                                                                            onClick={() => handleDownload(item)}
-                                                                                            startIcon={<DownloadIcon />}
-                                                                                        >
-                                                                                            Download
-                                                                                        </Button>
-                                                                                    </Grid>
-                                                                                )}
+                                                                                <Grid item>
+                                                                                    <Button
+                                                                                        sx={{
+                                                                                            borderRadius: 10,
+                                                                                            width: 150,
+                                                                                            height: 40
+                                                                                        }}
+                                                                                        variant="contained"
+                                                                                        onClick={() => handleDownload(item)}
+                                                                                        startIcon={<DownloadIcon />}
+                                                                                    >
+                                                                                        Download
+                                                                                    </Button>
+                                                                                </Grid>
                                                                                 <Grid item>
                                                                                     <Button
                                                                                         sx={{ borderRadius: 10, width: 100, height: 40 }}
