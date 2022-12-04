@@ -21,6 +21,7 @@
         "apexcharts": "^3.35.3",
         "axios": "^1.2.0",
         "dayjs": "^1.11.6",
+        "dom-to-image": "^2.6.0",
         "formik": "^2.2.9",
         "framer-motion": "^6.3.16",
         "http-proxy-middleware": "^2.0.6",
