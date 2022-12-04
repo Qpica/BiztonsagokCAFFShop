@@ -30,7 +30,7 @@ import { red, yellow } from '@mui/material/colors';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { Formik } from 'formik';
 import jwtDecode from 'jwt-decode';
-
+import * as Dom from 'react-dom/client';
 import * as React from 'react';
 import SubCard from 'ui-component/cards/SubCard';
 import MainCard from 'ui-component/cards/MainCard';
@@ -53,8 +53,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef } from 'react';
 import { caffActions, userActions } from '_store';
-import ViewImage from 'ui-component/ViewFile';
-import { width } from '@mui/system';
+import Canvas from 'ui-component/Canvas';
 
 const sampleItems = [
     {
@@ -93,8 +92,9 @@ const Library = ({ isLoading }) => {
     const [editCaffForm, setEditCaffForm] = React.useState(null);
     const [commentsEnabled, setCommentsEnabled] = React.useState(false);
     const [items, setItems] = React.useState(sampleItems);
-    const [searchText, setSearchText] = React.useState('');
+    const [display, setDisplay] = React.useState(null);
     const { user: authUser } = useSelector((x) => x.auth);
+    const [searchText, setSearchText] = React.useState('');
     const {
         allCaffPicture: caffPics,
         pending: postCaffPending,
@@ -106,11 +106,13 @@ const Library = ({ isLoading }) => {
     const canvasRef = useRef(null);
     const fileRef = useRef(null);
     const image = null;
-    const context = null;
     var search;
 
+    //const ctx = this.canvas.getContext('2d');
+    //const imageData = ctx.createImageData(item.width, item.height);
+
     useEffect(() => {
-        const canvas = canvasRef.current;
+        //const canvas = canvasRef.current;
         //context = canvas.getContext('2d');
         /* <canvas
                                                                                       width={item.width}
@@ -119,12 +121,45 @@ const Library = ({ isLoading }) => {
                                                                                   />*/
     }, []);
 
-    const handleDraw = (item) => {
-        const ctx = this.canvas.getContext('2d');
-        const imageData = ctx.createImageData(item.width, item.height);
-        imageData.data = item.caffData.preview;
-        ctx.putImageData(imageData, 0, 0);
+    const draw = (context, item) => {
+        var imgData = context.createImageData(item.width, item.height);
+        for (var i = 0; i < item.caffData.preview.length; i += 4) {
+            imgData.data[i + 0] = item.caffData.preview[i + 0];
+            imgData.data[i + 1] = item.caffData.preview[i + 1];
+            imgData.data[i + 2] = item.caffData.preview[i + 2];
+            imgData.data[i + 3] = 255;
+            //imgeData.data[i] = 100;
+            //imgData.data[i] = item.caffData.preview[i];
+        }
+        context.putImageData(imgData, 0, 0);
+        //console.log(item);
+        console.log(imgData.data);
+        console.log('Width: ' + item.width);
+        console.log('Height: ' + item.height);
+        console.log('Length: ' + item.caffData.preview.length);
     };
+
+    const searchTextChanged = (text) => {
+        setSearchText(text);
+    };
+
+    /*function imagedata_to_image(item) {
+        var canvas = canvasRef.current;
+        var ctx = canvas.getContext('2d');
+        var imagedata = ctx.createImageData(item.width, item.height);
+        for (var i = 0; i < item.caffData.preview.length; i++) {
+            imagedata.data[i] = item.caffData.preview[i];
+        }
+        canvas.width = item.width;
+        canvas.height = item.height;
+        ctx.putImageData(imagedata, 0, 0);
+        console.log(item);
+        console.log(imagedata.data);
+
+        // var image = new Image();
+        // image.src = canvas.toDataURL();
+        // return image;
+    }*/
 
     const handleUploadOpen = (item) => {
         setOpenUploadForm(true);
@@ -135,9 +170,6 @@ const Library = ({ isLoading }) => {
         setEditCaffForm(null);
     };
 
-    const searchTextChanged = (text) => {
-        setSearchText(text);
-    };
     const handleSearch = () => {
         dispatch(caffActions.search({ Title: searchText }));
     };
@@ -149,8 +181,10 @@ const Library = ({ isLoading }) => {
     };
 
     const handleDownload = (item) => {
+        //imagedata_to_image(item);
+        setDisplay(item);
         const linkArray = item._links.self.href.split('/');
-        dispatch(caffActions.getOneCaffPicture(linkArray[5]));
+        dispatch(caffActions.getOneCaffPictureData(linkArray[5]));
     };
 
     const onDeleteItem = (item) => {
@@ -358,6 +392,7 @@ const Library = ({ isLoading }) => {
                             <Grid item sy={{ p: 5.0 }}>
                                 <Grid container spacing={gridSpacing}>
                                     <Grid item xs={12} sm={12}>
+                                        {display && <Canvas item={display} draw={draw} />}
                                         {searchPics
                                             ? searchPics.map((item, index) => {
                                                   return (
@@ -396,39 +431,20 @@ const Library = ({ isLoading }) => {
                                                                       <Grid container direction="row" spacing={0}>
                                                                           <Grid item>
                                                                               <Grid container direction="row" spacing={1}>
-                                                                                  {(!item.isDownloadEnabled ||
-                                                                                      item.isDownloadEnabled == null) && (
-                                                                                      <Grid item>
-                                                                                          <Button
-                                                                                              sx={{
-                                                                                                  borderRadius: 10,
-                                                                                                  width: 150,
-                                                                                                  height: 40
-                                                                                              }}
-                                                                                              variant="contained"
-                                                                                              onClick={() => handleDraw(item)}
-                                                                                              startIcon={<BuyIcon />}
-                                                                                          >
-                                                                                              Buy
-                                                                                          </Button>
-                                                                                      </Grid>
-                                                                                  )}
-                                                                                  {item.isDownloadEnabled && (
-                                                                                      <Grid item>
-                                                                                          <Button
-                                                                                              sx={{
-                                                                                                  borderRadius: 10,
-                                                                                                  width: 150,
-                                                                                                  height: 40
-                                                                                              }}
-                                                                                              variant="contained"
-                                                                                              onClick={() => handleDownload(item)}
-                                                                                              startIcon={<DownloadIcon />}
-                                                                                          >
-                                                                                              Download
-                                                                                          </Button>
-                                                                                      </Grid>
-                                                                                  )}
+                                                                                  <Grid item>
+                                                                                      <Button
+                                                                                          sx={{
+                                                                                              borderRadius: 10,
+                                                                                              width: 150,
+                                                                                              height: 40
+                                                                                          }}
+                                                                                          variant="contained"
+                                                                                          onClick={() => handleDownload(item)}
+                                                                                          startIcon={<DownloadIcon />}
+                                                                                      >
+                                                                                          Download
+                                                                                      </Button>
+                                                                                  </Grid>
                                                                                   {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
                                                                                       <>
                                                                                           <Grid item>

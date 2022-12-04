@@ -59,7 +59,7 @@ function createExtraActions() {
     function getOneCaffPictureData() {
         return createAsyncThunk(
             `${name}/getOneCaffPictureData`,
-            async (id) => await fetchWrapper.get(`${baseUrl}/${id}/data`, null, null, true)
+            async (id) => await fetchWrapper.get(`${baseUrl}/${id}/data`, null, null, true, null, true)
         );
     }
     function postCaffPicture() {

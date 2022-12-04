@@ -31,28 +31,30 @@ function request(method) {
         }
         console.log(body, method);
         if (isCaffDown) {
-            return fetch(url, requestOptions).then(handleResponseCaff);
+            if (download) {
+                return fetch(url, requestOptions)
+                    .then((resp) => resp.blob())
+                    .then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // the filename you want
+                        a.download = 'caff.caff';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        //alert("your file has downloaded!"); // or you know, something with better UX...
+                    })
+                    .catch(
+                        () => {}
+                        //alert("error!")
+                    );
+            } else {
+                return fetch(url, requestOptions).then(handleResponseCaff);
+            }
         } else if (param) {
             return fetch(url + '?' + new URLSearchParams(param), requestOptions).then(handleResponse);
-        } else if (download) {
-            return fetch(url, requestOptions)
-                .then((resp) => resp.blob())
-                .then((blob) => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    // the filename you want
-                    a.download = 'caff.json';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    //alert("your file has downloaded!"); // or you know, something with better UX...
-                })
-                .catch(
-                    () => {}
-                    //alert("error!")
-                );
         } else {
             return fetch(url, requestOptions).then(handleResponse);
         }
