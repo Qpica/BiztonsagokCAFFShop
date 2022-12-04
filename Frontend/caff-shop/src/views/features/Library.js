@@ -44,7 +44,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CommentIcon from '@mui/icons-material/ChatBubble';
-import BuyIcon from '@mui/icons-material/ShoppingBag';
+import EyeIcon from '@mui/icons-material/Visibility';
 import DownloadIcon from '@mui/icons-material/ArrowDownward';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import MyIcon from './MyIcon';
@@ -182,7 +182,6 @@ const Library = ({ isLoading }) => {
 
     const handleDownload = (item) => {
         //imagedata_to_image(item);
-        setDisplay(item);
         const linkArray = item._links.self.href.split('/');
         dispatch(caffActions.getOneCaffPictureData(linkArray[5]));
     };
@@ -203,6 +202,31 @@ const Library = ({ isLoading }) => {
     useEffect(() => {
         dispatch(userActions.getUser(jwtDecode(authUser.accessToken).aud));
     }, []);
+
+    const [isOpenView, setIsOpenView] = React.useState(false);
+    const handleViewOpen = (item) => {
+        setDisplay(item);
+        setIsOpenView(true);
+    };
+    const ViewDialog = () => {
+        return (
+            <>
+                <Dialog
+                    open={isOpenView}
+                    onClose={() => setIsOpenView(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogContent>
+                        <Canvas item={display} draw={draw} />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsOpenView(false)}>Cancel</Button>
+                    </DialogActions>
+                </Dialog>
+            </>
+        );
+    };
 
     const UploadForm = () => {
         return (
@@ -353,6 +377,7 @@ const Library = ({ isLoading }) => {
 
     return (
         <>
+            <ViewDialog />
             <UploadForm />
             <MainCard title="Library">
                 <Grid item sy={{ m: 1.0 }}>
@@ -392,7 +417,6 @@ const Library = ({ isLoading }) => {
                             <Grid item sy={{ p: 5.0 }}>
                                 <Grid container spacing={gridSpacing}>
                                     <Grid item xs={12} sm={12}>
-                                        {display && <Canvas item={display} draw={draw} />}
                                         {searchPics
                                             ? searchPics.map((item, index) => {
                                                   return (
@@ -443,6 +467,20 @@ const Library = ({ isLoading }) => {
                                                                                           startIcon={<DownloadIcon />}
                                                                                       >
                                                                                           Download
+                                                                                      </Button>
+                                                                                  </Grid>
+                                                                                  <Grid item>
+                                                                                      <Button
+                                                                                          sx={{
+                                                                                              borderRadius: 10,
+                                                                                              width: 150,
+                                                                                              height: 40
+                                                                                          }}
+                                                                                          variant="contained"
+                                                                                          onClick={() => handleViewOpen(item)}
+                                                                                          startIcon={<EyeIcon />}
+                                                                                      >
+                                                                                          View content
                                                                                       </Button>
                                                                                   </Grid>
                                                                                   {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
@@ -632,6 +670,20 @@ const Library = ({ isLoading }) => {
                                                                                           startIcon={<DownloadIcon />}
                                                                                       >
                                                                                           Download
+                                                                                      </Button>
+                                                                                  </Grid>
+                                                                                  <Grid item>
+                                                                                      <Button
+                                                                                          sx={{
+                                                                                              borderRadius: 10,
+                                                                                              width: 150,
+                                                                                              height: 40
+                                                                                          }}
+                                                                                          variant="contained"
+                                                                                          onClick={() => handleViewOpen(item)}
+                                                                                          startIcon={<EyeIcon />}
+                                                                                      >
+                                                                                          View content
                                                                                       </Button>
                                                                                   </Grid>
                                                                                   {actUser.roles[0].roleName == 'ROLE_ADMINISTRATOR' ? (
