@@ -3,21 +3,24 @@ package com.Biztonsagok.CAFFShop.services;
 import com.Biztonsagok.CAFFShop.dto.UserRequestDTO;
 import com.Biztonsagok.CAFFShop.dto.UserResponseDTO;
 import com.Biztonsagok.CAFFShop.models.User;
+import com.Biztonsagok.CAFFShop.models.UserRole;
+import com.Biztonsagok.CAFFShop.models.UserRoleType;
 import com.Biztonsagok.CAFFShop.repositories.UserRepository;
+import com.Biztonsagok.CAFFShop.repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private UserRoleRepository userRoleRepository;
 	@Autowired
 	private PasswordEncoder encoder;
 
@@ -39,9 +42,12 @@ public class UserService {
 	}
 
 	public Optional<User> registerUser(UserRequestDTO userRequestDTO) {
-		User userToRegister = userRepository.save(
-				new User(userRequestDTO.getUsername(), encoder.encode(userRequestDTO.getPassword()))
-		);
+		Set<UserRole> roles = new HashSet<>();
+		Optional<UserRole> userRole = userRoleRepository.findByRoleName(UserRoleType.ROLE_USER);
+		User user = new User(userRequestDTO.getUsername(), encoder.encode(userRequestDTO.getPassword()));
+		userRole.ifPresent(roles::add);
+		user.setRoles(roles);
+		User userToRegister = userRepository.save(user);
 		return Optional.of(userToRegister);
 	}
 
