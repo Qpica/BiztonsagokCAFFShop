@@ -18,10 +18,7 @@ import SaveIcon from '@mui/icons-material/Save';
 const Profile = ({ isLoading }) => {
     const theme = useTheme();
     const { user: authUser } = useSelector((x) => x.auth);
-
-    const handleEdit = () => {
-        console.log('implemetation needed - network call');
-    };
+    const { users: users, error: usersError, act_user: actUser } = useSelector((x) => x.users);
 
     const dispatch = useDispatch();
 
@@ -39,7 +36,7 @@ const Profile = ({ isLoading }) => {
                                 </Grid>
                                 <Grid item sx={{ m: 1.5 }}>
                                     <MuiTypography variant="h5" gutterBottom>
-                                        Role: //todo role here
+                                        Role: {actUser.roles[0].roleName}
                                     </MuiTypography>
                                 </Grid>
                             </Grid>
