@@ -51,7 +51,10 @@ function createExtraActions() {
         return createAsyncThunk(`${name}/getAllCaffPicture`, async () => await fetchWrapper.get(`${baseUrl}`));
     }
     function getOneCaffPicture() {
-        return createAsyncThunk(`${name}/getOneCaffPicture`, async (id) => await fetchWrapper.get(`${baseUrl}/${id}`));
+        return createAsyncThunk(
+            `${name}/getOneCaffPicture`,
+            async (id) => await fetchWrapper.get(`${baseUrl}/${id}`, null, null, null, null, true)
+        );
     }
     function getOneCaffPictureData() {
         return createAsyncThunk(
