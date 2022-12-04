@@ -93,6 +93,7 @@ const Library = ({ isLoading }) => {
     const [editCaffForm, setEditCaffForm] = React.useState(null);
     const [commentsEnabled, setCommentsEnabled] = React.useState(false);
     const [items, setItems] = React.useState(sampleItems);
+    const [searchText, setSearchText] = React.useState('');
     const { user: authUser } = useSelector((x) => x.auth);
     const {
         allCaffPicture: caffPics,
@@ -132,8 +133,11 @@ const Library = ({ isLoading }) => {
         setEditCaffForm(null);
     };
 
+    const searchTextChanged = (text) => {
+        setSearchText(text);
+    };
     const handleSearch = () => {
-        dispatch(caffActions.search({ Title: 'a' }));
+        dispatch(caffActions.search({ Title: searchText }));
     };
 
     const handleBuy = (item) => {
@@ -318,7 +322,7 @@ const Library = ({ isLoading }) => {
                     <Grid container direction="column" columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid container direction="row" sx={{ m: 2.0 }}>
                             <Grid item>
-                                <SearchSection />
+                                <SearchSection onTextChanged={(text) => searchTextChanged(text)} />
                             </Grid>
                             <Grid item>
                                 <Button

@@ -59,17 +59,21 @@ const HeaderAvatarStyle = styled(Avatar, { shouldForwardProp })(({ theme }) => (
 
 // ==============================|| SEARCH INPUT ||============================== //
 
-const SearchSection = () => {
+const SearchSection = ({ onTextChanged }) => {
     const theme = useTheme();
     const [value, setValue] = useState('');
 
+    const onChanged = (e) => {
+        setValue(e.target.value);
+        onTextChanged(e.target.value);
+    };
     return (
         <>
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                 <OutlineInputStyle
                     id="input-search-header"
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => onChanged(e)}
                     placeholder="Search"
                     startAdornment={
                         <InputAdornment position="start">
