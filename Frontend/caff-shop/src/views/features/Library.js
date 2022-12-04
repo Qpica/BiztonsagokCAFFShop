@@ -11,6 +11,7 @@ import {
     DialogContent,
     DialogActions,
     Checkbox,
+    Switch,
     Divider,
     FormControl,
     FormControlLabel,
@@ -43,6 +44,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CommentIcon from '@mui/icons-material/ChatBubble';
+import BuyIcon from '@mui/icons-material/ShoppingBag';
+import DownloadIcon from '@mui/icons-material/ArrowDownward';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import MyIcon from './MyIcon';
 import AnimateButton from 'ui-component/extended/AnimateButton';
@@ -87,6 +90,7 @@ const Library = ({ isLoading }) => {
     const theme = useTheme();
     const [openUploadForm, setOpenUploadForm] = React.useState(false);
     const [editCaffForm, setEditCaffForm] = React.useState(null);
+    const [commentsEnabled, setCommentsEnabled] = React.useState(false);
     const [items, setItems] = React.useState(sampleItems);
     const { user: authUser } = useSelector((x) => x.auth);
     const { allCaffPicture: caffPics, pending: postCaffPending } = useSelector((x) => x.caff);
@@ -101,6 +105,16 @@ const Library = ({ isLoading }) => {
     const handleUploadClose = () => {
         setOpenUploadForm(false);
         setEditCaffForm(null);
+    };
+
+    const handleBuy = (item) => {
+        item.isDownloadEnabled = true;
+        console.log('clicked');
+        console.log(items);
+    };
+
+    const handleDownload = (item) => {
+        console.log('Need implementation - download');
     };
 
     const onDeleteItem = (item) => {
@@ -272,7 +286,7 @@ const Library = ({ isLoading }) => {
             <MainCard title="Library">
                 <Grid item sy={{ m: 1.0 }}>
                     <Grid container direction="column" columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid container direction="row">
+                        <Grid container direction="row" sx={{ m: 2.0 }}>
                             <Grid item>
                                 <SearchSection />
                             </Grid>
@@ -281,7 +295,7 @@ const Library = ({ isLoading }) => {
                                     Search
                                 </Button>
                             </Grid>
-                            <Grid item sx={{ width: 100 }} />
+                            <Grid item sx={{ width: 30 }} />
                             <Grid item>
                                 <Button
                                     sx={{ borderRadius: 10, width: 120, height: 40, m: 0.5 }}
@@ -293,8 +307,12 @@ const Library = ({ isLoading }) => {
                                 </Button>
                             </Grid>
                         </Grid>
+                        <Grid item sx={{ m: 1.5 }}>
+                            <Switch value={commentsEnabled} onClick={() => setCommentsEnabled(!commentsEnabled)}></Switch>
+                            Show comments
+                        </Grid>
                     </Grid>
-                    <Grid item sy={{ m: 1.0 }}>
+                    <Grid item sy={{ m: 1.0 }} sx={{ m: 2.0 }}>
                         <Grid container direction="column">
                             <Grid item sy={{ p: 5.0 }}>
                                 <Grid container spacing={gridSpacing}>
@@ -304,19 +322,72 @@ const Library = ({ isLoading }) => {
                                                 return (
                                                     <div key={index}>
                                                         <SubCard title={item.title}>
-                                                            <Grid container direction="column" spacing={1}>
+                                                            <Grid container direction="column">
                                                                 <Grid item>
-                                                                    <Grid container direction="row" spacing={1}>
-                                                                        <Grid item xs={12} sm={6}>
-                                                                            <MuiTypography variant="h5" gutterBottom>
-                                                                                file...
-                                                                                {
-                                                                                    //filename: {item.fileName}
-                                                                                }
-                                                                            </MuiTypography>
+                                                                    <Box sx={{ m: 2.5 }}>
+                                                                        <Grid container direction="row">
+                                                                            <Grid item xs={12} sm={2}>
+                                                                                <MuiTypography variant="h5" gutterBottom>
+                                                                                    Filename:
+                                                                                </MuiTypography>
+                                                                            </Grid>
+                                                                            <Grid item xs={12} sm={6}>
+                                                                                <MuiTypography variant="h5" gutterBottom>
+                                                                                    {item.filename} //filename
+                                                                                </MuiTypography>
+                                                                            </Grid>
                                                                         </Grid>
-                                                                        <Grid item xs={12} sm={6}>
+                                                                        <Grid container direction="row">
+                                                                            <Grid item xs={12} sm={2}>
+                                                                                <MuiTypography variant="h5" gutterBottom>
+                                                                                    Price:
+                                                                                </MuiTypography>
+                                                                            </Grid>
+                                                                            <Grid item xs={12} sm={6}>
+                                                                                <MuiTypography variant="h5" gutterBottom>
+                                                                                    {item.price} $ //price here
+                                                                                </MuiTypography>
+                                                                            </Grid>
+                                                                        </Grid>
+                                                                    </Box>
+                                                                </Grid>
+                                                                <Grid item>
+                                                                    <Grid container direction="row" spacing={0}>
+                                                                        <Grid item>
                                                                             <Grid container direction="row" spacing={1}>
+                                                                                {(!item.isDownloadEnabled ||
+                                                                                    item.isDownloadEnabled == null) && (
+                                                                                    <Grid item>
+                                                                                        <Button
+                                                                                            sx={{
+                                                                                                borderRadius: 10,
+                                                                                                width: 150,
+                                                                                                height: 40
+                                                                                            }}
+                                                                                            variant="contained"
+                                                                                            onClick={() => handleBuy(item)}
+                                                                                            startIcon={<BuyIcon />}
+                                                                                        >
+                                                                                            Buy
+                                                                                        </Button>
+                                                                                    </Grid>
+                                                                                )}
+                                                                                {item.isDownloadEnabled && (
+                                                                                    <Grid item>
+                                                                                        <Button
+                                                                                            sx={{
+                                                                                                borderRadius: 10,
+                                                                                                width: 150,
+                                                                                                height: 40
+                                                                                            }}
+                                                                                            variant="contained"
+                                                                                            onClick={() => handleDownload(item)}
+                                                                                            startIcon={<DownloadIcon />}
+                                                                                        >
+                                                                                            Download
+                                                                                        </Button>
+                                                                                    </Grid>
+                                                                                )}
                                                                                 <Grid item>
                                                                                     <Button
                                                                                         sx={{ borderRadius: 10, width: 100, height: 40 }}
@@ -351,83 +422,100 @@ const Library = ({ isLoading }) => {
                                                                         </Grid>
                                                                     </Grid>
                                                                 </Grid>
-                                                                <Grid item>
-                                                                    <MuiTypography variant="caption" gutterBottom>
-                                                                        Comments
-                                                                    </MuiTypography>
-                                                                </Grid>
-                                                                <Grid item>
-                                                                    <List sx={{ maxWidth: 450 }}>
-                                                                        {item.userCommentList.map((comment, index) => {
-                                                                            return (
-                                                                                <div key={index}>
-                                                                                    <ListItem>
-                                                                                        <ListItemAvatar>
-                                                                                            <MyIcon
-                                                                                                color={yellow[400]}
-                                                                                                icon={<CommentIcon fontSize="sm" />}
-                                                                                            />
-                                                                                        </ListItemAvatar>
-                                                                                        <ListItemButton sx={{ maxWidth: 550 }}>
-                                                                                            {comment.ownerName}: {comment.comment_value}
-                                                                                        </ListItemButton>
-                                                                                    </ListItem>
-                                                                                </div>
-                                                                            );
-                                                                        })}
-                                                                    </List>
-                                                                </Grid>
-                                                                <Formik
-                                                                    initialValues={{
-                                                                        comment: ''
-                                                                    }}
-                                                                    onSubmit={async (values, {}) => {
-                                                                        const linkArray = item._links.self.href.split('/');
-                                                                        dispatch(
-                                                                            caffActions.addComment({
-                                                                                id: linkArray[5],
-                                                                                comment_value: values.comment
-                                                                            })
-                                                                        );
-                                                                        values.comment = '';
-                                                                    }}
-                                                                >
-                                                                    {({ values, handleSubmit, isSubmitting, handleBlur, handleChange }) => (
+                                                                <Grid item sx={{ m: 2.0 }}>
+                                                                    {commentsEnabled && (
                                                                         <>
-                                                                            <form noValidate onSubmit={handleSubmit}>
-                                                                                <FormControl sx={{ ...theme.typography.customInput }}>
-                                                                                    <InputLabel htmlFor="comment">
-                                                                                        Write something...
-                                                                                    </InputLabel>
-                                                                                    <OutlinedInput
-                                                                                        id="comment"
-                                                                                        type="text"
-                                                                                        name="comment"
-                                                                                        value={values.comment}
-                                                                                        onBlur={handleBlur}
-                                                                                        onChange={handleChange}
-                                                                                        label="Comment"
-                                                                                        inputProps={{}}
-                                                                                    />
-                                                                                </FormControl>
-                                                                                <Box sx={{ mt: 2 }}>
-                                                                                    <AnimateButton>
-                                                                                        <Button
-                                                                                            disableElevation
-                                                                                            disabled={isSubmitting}
-                                                                                            size="large"
-                                                                                            type="submit"
-                                                                                            variant="contained"
-                                                                                            color="secondary"
-                                                                                        >
-                                                                                            Add Comment
-                                                                                        </Button>
-                                                                                    </AnimateButton>
-                                                                                </Box>
-                                                                            </form>
+                                                                            <Grid item>
+                                                                                <MuiTypography variant="caption" gutterBottom>
+                                                                                    Comments
+                                                                                </MuiTypography>
+                                                                            </Grid>
+                                                                            <Grid item>
+                                                                                <List sx={{ maxWidth: 450 }}>
+                                                                                    {item.userCommentList.map((comment, index) => {
+                                                                                        return (
+                                                                                            <div key={index}>
+                                                                                                <ListItem>
+                                                                                                    <ListItemAvatar>
+                                                                                                        <MyIcon
+                                                                                                            color={yellow[400]}
+                                                                                                            icon={
+                                                                                                                <CommentIcon fontSize="sm" />
+                                                                                                            }
+                                                                                                        />
+                                                                                                    </ListItemAvatar>
+                                                                                                    <ListItemButton sx={{ maxWidth: 550 }}>
+                                                                                                        {comment.ownerName}:{' '}
+                                                                                                        {comment.comment_value}
+                                                                                                    </ListItemButton>
+                                                                                                </ListItem>
+                                                                                            </div>
+                                                                                        );
+                                                                                    })}
+                                                                                </List>
+                                                                            </Grid>
+                                                                            <Formik
+                                                                                initialValues={{
+                                                                                    comment: ''
+                                                                                }}
+                                                                                onSubmit={async (values, {}) => {
+                                                                                    const linkArray = item._links.self.href.split('/');
+                                                                                    dispatch(
+                                                                                        caffActions.addComment({
+                                                                                            id: linkArray[5],
+                                                                                            comment_value: values.comment
+                                                                                        })
+                                                                                    );
+                                                                                    values.comment = '';
+                                                                                }}
+                                                                            >
+                                                                                {({
+                                                                                    values,
+                                                                                    handleSubmit,
+                                                                                    isSubmitting,
+                                                                                    handleBlur,
+                                                                                    handleChange
+                                                                                }) => (
+                                                                                    <>
+                                                                                        <form noValidate onSubmit={handleSubmit}>
+                                                                                            <FormControl
+                                                                                                sx={{ ...theme.typography.customInput }}
+                                                                                            >
+                                                                                                <InputLabel htmlFor="comment">
+                                                                                                    Write something...
+                                                                                                </InputLabel>
+                                                                                                <OutlinedInput
+                                                                                                    id="comment"
+                                                                                                    type="text"
+                                                                                                    name="comment"
+                                                                                                    value={values.comment}
+                                                                                                    onBlur={handleBlur}
+                                                                                                    onChange={handleChange}
+                                                                                                    label="Comment"
+                                                                                                    inputProps={{}}
+                                                                                                />
+                                                                                            </FormControl>
+                                                                                            <Box sx={{ mt: 2 }}>
+                                                                                                <AnimateButton>
+                                                                                                    <Button
+                                                                                                        disableElevation
+                                                                                                        disabled={isSubmitting}
+                                                                                                        size="large"
+                                                                                                        type="submit"
+                                                                                                        variant="contained"
+                                                                                                        color="secondary"
+                                                                                                    >
+                                                                                                        Add Comment
+                                                                                                    </Button>
+                                                                                                </AnimateButton>
+                                                                                            </Box>
+                                                                                        </form>
+                                                                                    </>
+                                                                                )}
+                                                                            </Formik>
                                                                         </>
                                                                     )}
-                                                                </Formik>
+                                                                </Grid>
                                                             </Grid>
                                                         </SubCard>
                                                     </div>
